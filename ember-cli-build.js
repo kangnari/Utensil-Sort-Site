@@ -19,5 +19,8 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
+  // Bootstrap imports. Only import what you need.
+  // app.import('bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js');
+
   return app.toTree();
 };

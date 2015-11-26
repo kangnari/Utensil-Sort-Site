@@ -3,7 +3,7 @@
  */
 
 export default function() {
-  var animationTime = 400,
+  var animationTime = 300,
       delay = 200;
 
   // INITIAL LOAD TRANSITIONS
@@ -19,7 +19,7 @@ export default function() {
   // about <-> all other pages
   this.transition(
     this.fromRoute('about'),
-    this.toRoute(['about.index', 'design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
+    this.toRoute(['design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
     this.use('fade', {
       duration: animationTime
     }),
@@ -27,6 +27,66 @@ export default function() {
       duration: animationTime
     })
     // this.debug()
+  );
+
+  // design <-> all other pages
+  this.transition(
+    this.fromRoute('design'),
+    this.toRoute(['implementation', 'results', 'conclusion', 'team', 'additional']),
+    this.use('fade', {
+      duration: animationTime
+    }),
+    this.reverse('fade', {
+      duration: animationTime
+    })
+  );
+
+  // implementation <-> all other pages
+  this.transition(
+    this.fromRoute('implementation'),
+    this.toRoute(['results', 'conclusion', 'team', 'additional']),
+    this.use('fade', {
+      duration: animationTime
+    }),
+    this.reverse('fade', {
+      duration: animationTime
+    })
+  );
+
+  // results <-> all other pages
+  this.transition(
+    this.fromRoute('results'),
+    this.toRoute(['conclusion', 'team', 'additional']),
+    this.use('fade', {
+      duration: animationTime
+    }),
+    this.reverse('fade', {
+      duration: animationTime
+    })
+  );
+
+  // conclusion <-> all other pages
+  this.transition(
+    this.fromRoute('conclusion'),
+    this.toRoute(['team', 'additional']),
+    this.use('fade', {
+      duration: animationTime
+    }),
+    this.reverse('fade', {
+      duration: animationTime
+    })
+  );
+
+  // team <-> all other pages
+  this.transition(
+    this.fromRoute('team'),
+    this.toRoute(['additional']),
+    this.use('fade', {
+      duration: animationTime
+    }),
+    this.reverse('fade', {
+      duration: animationTime
+    })
   );
 
   this.transition(

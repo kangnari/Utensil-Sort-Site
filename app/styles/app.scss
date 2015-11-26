@@ -1,1 +1,26 @@
-@import "bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap";
+/* CONTENTS
+ *
+ * BASE
+ * base..............Globally available classes and base css
+ * fonts.............Globally available fonts
+ *
+ * TOOLS
+ * define............Globally available variables and mixins
+ *
+ * PAGES
+ * about.............Main about page css
+ * design............Design page css
+ * implementation....Implementation page css
+ * results...........Results page css
+ * conclusion........Conclusion page css
+ * team..............Team page css
+ * additional........Additional page css
+ */
+
+// External libraries
+@import 'bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap';
+
+// Internal files
+@import 'base';
+@import 'define';
+@import 'about';

@@ -1,0 +1,46 @@
+/*------------------------------*\
+  #BASE
+\*------------------------------*/
+
+/*
+ * Base html and body styling
+ */
+
+html, body {
+  height: 100%;
+}
+
+/*
+ * Set height of the first .ember-view to 100%.
+ */
+
+body > .ember-view {
+  height: 100%;
+}
+
+body > .ember-view > .liquid-container {
+  height: 100%;
+}
+
+body > .ember-view > .liquid-container > .liquid-child {
+  height: 100%;
+}
+
+.navbar {
+  position: fixed;
+  width: 100%;
+  text-align: center;
+}
+
+
+/*
+ * Universal spacers between points of interest.
+ * Use with empty divs to separate sections.
+ */
+
+.spacer-xs   { height: 10px; }
+.spacer-sm   { height: 20px; }
+.spacer-md   { height: 40px; }
+.spacer-lg   { height: 80px; }
+.spacer-xlg  { height: 120px; }
+.spacer-xxlg { height: 160px; }

@@ -19,3 +19,48 @@ $base-blue: #00CBE9;
  */
 
 $base-gray: #6E6E6E;
+
+
+
+
+/*------------------------------*\
+  #MIXINS
+\*------------------------------*/
+
+/*
+ * Basic cross-site compatible css3 animation mixin.
+ * Include this in any class that requires an
+ * animation.
+ *
+ * ex. @include animate(0.3s);
+ */
+
+@mixin animate($duration) {
+  -webkit-transition: all $duration ease;
+     -moz-transition: all $duration ease;
+      -ms-transition: all $duration ease;
+          transition: all $duration ease;
+}
+
+/*
+ * Remove default link styling.
+ */
+
+ @mixin remove-link($color) {
+  &:visited {
+    color: $color;
+    text-decoration: none;
+  }
+  &:hover {
+    color: $color;
+    text-decoration: none;
+  }
+  &:active {
+    color: $color;
+    text-decoration: none;
+  }
+  &.active {
+    color: $color;
+    text-decoration: none;
+  }
+}

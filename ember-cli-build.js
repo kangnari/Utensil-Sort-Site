@@ -19,8 +19,15 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  // Bootstrap imports. Only import what you need.
-  // app.import('bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js');
+  // Fonts
+  var pickFiles = require('broccoli-static-compiler');
+  var bootstrapFonts = pickFiles('bower_components/bootstrap-sass-official/assets/fonts/bootstrap', {
+    srcDir: '/',
+    destDir: '/fonts/bootstrap/'
+  });
 
-  return app.toTree();
+  // Bootstrap imports. Only import what you need.
+  // app.import('bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/scrollspy.js');
+
+  return app.toTree(bootstrapFonts);
 };

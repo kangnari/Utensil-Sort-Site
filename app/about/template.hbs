@@ -1,0 +1,11 @@
+<div class="about">
+  {{#link-to leftMove class="left-transition" classBinding="leftMove:active-transition"}}
+    <i class="glyphicon glyphicon-chevron-left"></i>
+  {{/link-to}}
+  {{#link-to rightMove class="right-transition" classBinding="rightMove:active-transition"}}
+    <i class="glyphicon glyphicon-chevron-right"></i>
+  {{/link-to}}
+  <div class="center-display">
+    {{liquid-outlet}}
+  </div>
+</div>

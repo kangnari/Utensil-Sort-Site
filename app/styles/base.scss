@@ -26,11 +26,113 @@ body > .ember-view > .liquid-container > .liquid-child {
   height: 100%;
 }
 
+
+
+
+
+/*
+ * Navbar for the site.
+ */
+
 .navbar {
   position: fixed;
+  top: 0;
+  z-index: 10;
   width: 100%;
   text-align: center;
 }
+
+/*
+ * Routing links on the navbar.
+ */
+
+.navbar-link {
+  @include animate(0.3s);
+  @include remove-link(white);
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px;
+  overflow: hidden;
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  border-radius: 50%;
+  opacity: 0.8;
+  background-color: $base-orange;
+  text-align: center;
+  color: white;
+  &:hover {
+    // Need to set margining here to prevent
+    // other links from being pushed up/down.
+    margin: 5px;
+    width: 74px;
+    height: 74px;
+    line-height: 74px;
+    opacity: 1;
+  }
+  &.active {
+    background-color: $base-blue;
+  }
+}
+
+
+
+
+
+/*
+ * Button for left transitions.
+ */
+
+.left-transition {
+  @include animate(0.3s);
+  @include remove-link(white);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -webkit-transform: translateY(-50%);
+     -moz-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+         -transform: translateY(-50%);
+  opacity: 0;
+}
+
+/*
+ * Button for right transitions.
+ */
+
+.right-transition {
+  @include animate(0.3s);
+  @include remove-link(white);
+  position: absolute;
+  top: 50%;
+  right: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -webkit-transform: translateY(-50%);
+     -moz-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+         -transform: translateY(-50%);
+  opacity: 0;
+}
+
+/*
+ * Left/right-transitions should use this
+ * if link is valid.
+ */
+
+.active-transition {
+  z-index: 8;
+  padding: 16px;
+  background-color: $base-gray;
+  color: white;
+  opacity: 0.5;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 
 
 /*

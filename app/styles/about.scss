@@ -9,19 +9,28 @@
  */
 
 .about {
+  position: relative;
   height: 100%;
-  padding: 40px;
   background: url('/assets/images/utensils.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
      -moz-background-size: cover;
        -o-background-size: cover;
           background-size: cover;
+  h1 {
+    color: $base-orange;
+  }
 }
-.test {
-  width: 50%;
-  height: 50%;
+
+.center-display {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  -webkit-transform: translateY(-50%);
+     -moz-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+         -transform: translateY(-50%);
+  padding-left: 64px;
+  padding-right: 64px;
   text-align: center;
-  background-color: $base-orange;
-  color: white;
-  border-radius: 50%;
 }

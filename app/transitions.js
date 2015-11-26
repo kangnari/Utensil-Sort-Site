@@ -3,28 +3,51 @@
  */
 
 export default function() {
-  var fadeTime = 200;
+  var animationTime = 400,
+      delay = 200;
 
   // INITIAL LOAD TRANSITIONS
   this.transition(
     this.onInitialRender(),
     this.use('fade', {
-      duration: fadeTime
+      duration: animationTime
     })
   );
 
   // BASE ROUTE-ROUTE TRANSITIONS
 
-  // index <-> all other pages
+  // about <-> all other pages
   this.transition(
-    this.fromRoute('index'),
-    this.toRoute(['design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
+    this.fromRoute('about'),
+    this.toRoute(['about.index', 'design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
     this.use('fade', {
-      duration: fadeTime
+      duration: animationTime
     }),
     this.reverse('fade', {
-      duration: fadeTime
+      duration: animationTime
     })
     // this.debug()
+  );
+
+  this.transition(
+    this.fromRoute('about.index'),
+    this.toRoute('about.project'),
+    this.use('toLeft', {
+      duration: animationTime
+    }),
+    this.reverse('toRight', {
+      duration: animationTime
+    })
+  );
+
+  this.transition(
+    this.fromRoute('about.project'),
+    this.toRoute('about.real'),
+    this.use('toLeft', {
+      duration: animationTime
+    }),
+    this.reverse('toRight', {
+      duration: animationTime
+    })
   );
 }

@@ -3,11 +3,23 @@
 \*------------------------------*/
 
 /*
- * Base html and body styling
+ * Base html styling
  */
 
-html, body {
+html {
   height: 100%;
+}
+
+/*
+ * Base body styling. Margins are required to
+ * clear space for side navbar.
+ */
+body {
+  height: 100%;
+  margin-right: 100px;
+  @media (min-width: $screen-sm-min) {
+    margin-right: 200px;
+  }
 }
 
 /*
@@ -36,10 +48,27 @@ body > .ember-view > .liquid-container > .liquid-child {
 
 .navbar {
   position: fixed;
-  top: 0;
+  top: -1px;
+  bottom: -1px;
+  right: -1px;
   z-index: 10;
-  width: 100%;
+  width: 100px;
+  margin-bottom: 0px;
   text-align: center;
+  @media (min-width: $screen-sm-min) {
+    width: 200px;
+  }
+  ul {
+    display: table;
+    width: 100%;
+    height: 100%;
+    list-style-type: none;
+    padding-left: 0px;
+  }
+  li {
+    display: table-row;
+    width: 100%;
+  }
 }
 
 /*
@@ -49,25 +78,14 @@ body > .ember-view > .liquid-container > .liquid-child {
 .navbar-link {
   @include animate(0.3s);
   @include remove-link(white);
-  display: inline-block;
   vertical-align: middle;
-  margin: 10px;
-  overflow: hidden;
-  width: 64px;
-  height: 64px;
-  line-height: 64px;
-  border-radius: 50%;
-  opacity: 0.8;
+  display: table-cell;
+  border-bottom: 1px solid white;
   background-color: $base-orange;
   text-align: center;
+  font-size: $font-size-h4;
   color: white;
   &:hover {
-    // Need to set margining here to prevent
-    // other links from being pushed up/down.
-    margin: 5px;
-    width: 74px;
-    height: 74px;
-    line-height: 74px;
     opacity: 1;
   }
   &.active {

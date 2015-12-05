@@ -10,16 +10,4 @@ import Ember from 'ember';
  */
 
 export default Ember.Route.extend({
-  /**
-   * Ember hook executed when the router enters
-   * the route. Need to set transitions here.
-   *
-   * @function activate
-   * @memberof AboutRealRoute
-   */
-  activate: function() {
-    var controller = this.controllerFor('about');
-    controller.set('leftMove', 'about.project');
-    controller.set('rightMove', null);
-  }
 });

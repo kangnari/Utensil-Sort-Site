@@ -11,14 +11,49 @@
 .about {
   position: relative;
   height: 100%;
-  background: url('/assets/images/utensils.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-     -moz-background-size: cover;
-       -o-background-size: cover;
-          background-size: cover;
   color: black;
+  .ember-view {
+    height: 100%;
+  }
+  h2 {
+    margin-top: 5px;
+  }
+}
+
+.about-index {
+  height: 100%;
+  background-color: #FF0080;
+  color: white;
   h1, h2 {
-    color: $base-orange;
+    color: $dark-gray;
+  }
+  h1 {
+    letter-spacing: 10px;
+    font-weight: bold;
+  }
+}
+
+.about-project {
+  height: 100%;
+  background-color: $dark-gray;
+  color: white;
+  h2 {
+    color: #1FD26A;
+    i {
+      margin-top: 15px;
+    }
+  }
+}
+
+.about-real {
+  height: 100%;
+  background-color: #1FD26A;
+  color: white;
+  h2 {
+    color: #FFD700;
+    i {
+      margin-top: 15px;
+    }
   }
 }
 

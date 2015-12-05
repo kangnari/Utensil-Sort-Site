@@ -1,25 +1,41 @@
 <div class="navbar">
-  {{#link-to "about" class="navbar-link"}}
-    about
-  {{/link-to}}
-  {{#link-to "design" class="navbar-link"}}
-    design
-  {{/link-to}}
-  {{#link-to "implementation" class="navbar-link"}}
-    process
-  {{/link-to}}
-  {{#link-to "results" class="navbar-link"}}
-    results
-  {{/link-to}}
-  {{#link-to "conclusion" class="navbar-link"}}
-    wrap
-  {{/link-to}}
-  {{#link-to "team" class="navbar-link"}}
-    team
-  {{/link-to}}
-  {{#link-to "additional" class="navbar-link"}}
-    more
-  {{/link-to}}
+  <ul>
+    <li>
+      {{#link-to "about" class="navbar-link"}}
+        about
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "design" class="navbar-link"}}
+        design
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "implementation" class="navbar-link"}}
+        process
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "results" class="navbar-link"}}
+        results
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "conclusion" class="navbar-link"}}
+        wrap
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "team" class="navbar-link"}}
+        team
+      {{/link-to}}
+    </li>
+    <li>
+      {{#link-to "additional" class="navbar-link"}}
+        more
+      {{/link-to}}
+    </li>
+  </ul>
 </div>
 
 {{liquid-outlet}}

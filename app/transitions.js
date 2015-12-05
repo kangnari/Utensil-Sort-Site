@@ -20,10 +20,10 @@ export default function() {
   this.transition(
     this.fromRoute('about'),
     this.toRoute(['design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
     // this.debug()
@@ -92,10 +92,10 @@ export default function() {
   this.transition(
     this.fromRoute('about.index'),
     this.toRoute('about.project'),
-    this.use('toLeft', {
+    this.use('toUp', {
       duration: animationTime
     }),
-    this.reverse('toRight', {
+    this.reverse('toDown', {
       duration: animationTime
     })
   );
@@ -103,10 +103,10 @@ export default function() {
   this.transition(
     this.fromRoute('about.project'),
     this.toRoute('about.real'),
-    this.use('toLeft', {
+    this.use('toUp', {
       duration: animationTime
     }),
-    this.reverse('toRight', {
+    this.reverse('toDown', {
       duration: animationTime
     })
   );

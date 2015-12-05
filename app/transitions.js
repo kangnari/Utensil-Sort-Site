@@ -33,10 +33,10 @@ export default function() {
   this.transition(
     this.fromRoute('design'),
     this.toRoute(['implementation', 'results', 'conclusion', 'team', 'additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
   );
@@ -45,10 +45,10 @@ export default function() {
   this.transition(
     this.fromRoute('implementation'),
     this.toRoute(['results', 'conclusion', 'team', 'additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
   );
@@ -57,10 +57,10 @@ export default function() {
   this.transition(
     this.fromRoute('results'),
     this.toRoute(['conclusion', 'team', 'additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
   );
@@ -69,10 +69,10 @@ export default function() {
   this.transition(
     this.fromRoute('conclusion'),
     this.toRoute(['team', 'additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
   );
@@ -81,10 +81,10 @@ export default function() {
   this.transition(
     this.fromRoute('team'),
     this.toRoute(['additional']),
-    this.use('fade', {
+    this.use('toLeft', {
       duration: animationTime
     }),
-    this.reverse('fade', {
+    this.reverse('toRight', {
       duration: animationTime
     })
   );

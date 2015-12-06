@@ -26,6 +26,162 @@ $base-gray: #6E6E6E;
 
 $dark-gray: #32313B;
 
+/*
+ * Base pink used throughout the site.
+ */
+
+$base-pink: #FF0080;
+
+/*
+ * Base green used throughout the site.
+ */
+
+$base-green: #1FD26A;
+
+
+
+
+/*------------------------------*\
+  #ANIMATIONS
+\*------------------------------*/
+
+/*
+ * Object that bounces at the bottom
+ * of its parent.
+ */
+
+.bounce-down {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  -webkit-animation: bounce-down 2s infinite;
+     -moz-animation: bounce-down 2s infinite;
+      -ms-animation: bounce-down 2s infinite;
+         -animation: bounce-down 2s infinite;
+}
+
+/*
+ * Object that bounces at the top
+ * of its parent.
+ */
+
+.bounce-up {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  -webkit-animation: bounce-up 2s infinite;
+}
+
+/*
+ * Actual animation for the bounce-down class.
+ */
+
+@-webkit-keyframes bounce-down {
+  0% {
+    bottom: 0px;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    bottom: 8px;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    bottom:0;
+  }
+}
+@keyframes bounce-down {
+  0% {
+    bottom: 0px;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    bottom: 8px;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    bottom:0;
+  }
+}
+
+/*
+ * Actual animation for the bounce-up class.
+ */
+
+@-webkit-keyframes bounce-up {
+  0% {
+    top: 0px;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    top: 8px;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+@keyframes bounce-up {
+  0% {
+    top: 0px;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    top: 8px;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+
+/*
+ * Utensil shakes if found.
+ */
+
+.found {
+  -webkit-animation: shake 0.5s;
+     -moz-animation: shake 0.5s;
+      -ms-animation: shake 0.5s;
+         -animation: shake 0.5s;
+}
+
+/*
+ * Actual animation for the shake class.
+ */
+
+@-webkit-keyframes shake {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  10%, 50%, 90% {
+    -webkit-transform: rotate(30deg);
+  }
+  30%, 70% {
+    -webkit-transform: rotate(-30deg);
+  }
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+
+@keyframes shake {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  10%, 50%, 90% {
+    -webkit-transform: rotate(30deg);
+  }
+  30%, 70% {
+    -webkit-transform: rotate(-30deg);
+  }
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+
+
 
 
 /*------------------------------*\

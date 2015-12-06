@@ -1,11 +1,14 @@
 <div class="about-index">
   <div class="center-display">
     <h1>UTENSIL SORT</h1>
-    <h2>U Tens? il Sort!</h2>
+    <h2>U Tens? {{hidden-utensil type="spoon"
+                     soundID=soundID
+                     isFound=isFound
+                     action="foundUtensil"}}l Sort!</h2>
     <p class="lead">
       Utensil Sort uses a fully-autonomous Zumy and two cameras to group a random assortment of forks, knives, and spoons into their respective piles.
     </p>
-    {{#link-to "about.project"}}
+    {{#link-to "about.project" class="bounce-down"}}
       <i class="glyphicon glyphicon-chevron-down"></i>
     {{/link-to}}
   </div>

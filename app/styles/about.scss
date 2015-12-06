@@ -18,11 +18,16 @@
   h2 {
     margin-top: 5px;
   }
+  .bounce-down, .bounce-up {
+    width: 50px;
+    height: auto;
+    margin-left: -25px;
+  }
 }
 
 .about-index {
   height: 100%;
-  background-color: #FF0080;
+  background-color: $base-pink;
   color: white;
   h1, h2 {
     color: $dark-gray;
@@ -31,6 +36,12 @@
     letter-spacing: 10px;
     font-weight: bold;
   }
+  a {
+    color: $dark-gray;
+  }
+  img {
+    padding-bottom: 6px;
+  }
 }
 
 .about-project {
@@ -38,22 +49,28 @@
   background-color: $dark-gray;
   color: white;
   h2 {
-    color: #1FD26A;
+    color: $base-green;
     i {
       margin-top: 15px;
     }
+  }
+  a {
+    color: $base-green;
   }
 }
 
 .about-real {
   height: 100%;
-  background-color: #1FD26A;
+  background-color: $base-green;
   color: white;
   h2 {
     color: #FFD700;
     i {
       margin-top: 15px;
     }
+  }
+  a {
+    color: #FFD700;
   }
 }
 
@@ -67,8 +84,7 @@
      -moz-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
          -transform: translateY(-50%);
-  padding-left: 64px;
-  padding-right: 64px;
+  padding: 20px 64px 20px 64px;
   text-align: center;
 }
 

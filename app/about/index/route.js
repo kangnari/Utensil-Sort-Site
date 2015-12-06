@@ -10,6 +10,26 @@ import Ember from 'ember';
  */
 
 export default Ember.Route.extend({
+  /*
+   * Ember hook called after the model is set.
+   * If the user has already found the hidden utensil,
+   * the image should be blank.
+   *
+   * @function setupController
+   * @memberof AboutIndexRoute
+   *
+   * @param {object} controller -- AboutIndexController
+   */
+  setupController: function(controller) {
+    var appController = this.controllerFor('application');
+    var id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+    controller.set('soundID', id);
+    controller.set('isFound', appController.get('utensils')['about-index']);
+  },
+
   /**
    * Handles the wheel event by transitioning the user
    * to the appropriate route. Remember to add the listener
@@ -51,6 +71,23 @@ export default Ember.Route.extend({
      */
     willTransition: function(transition) {
       document.body.removeEventListener('wheel', this._onScroll, true);
+    },
+
+    /**
+     * Called when user has clicked on a hidden utensil. The
+     * application should keep track of which utensils have
+     * alredy been found.
+     *
+     * @function foundUtensil
+     * memberof AboutIndexRoute
+     */
+    foundUtensil: function()  {
+      var appController = this.controllerFor('application'),
+          utensils = appController.get('utensils');
+
+      this.get('controller').set('isFound', true);
+      utensils['about-index'] = true;
+      appController.set('utensils', utensils);
     }
   }
 });

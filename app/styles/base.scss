@@ -68,6 +68,7 @@ body > .ember-view > .liquid-container > .liquid-child {
   li {
     display: table-row;
     width: 100%;
+    border-bottom: 1px solid white;
   }
 }
 
@@ -81,15 +82,18 @@ body > .ember-view > .liquid-container > .liquid-child {
   vertical-align: middle;
   display: table-cell;
   border-bottom: 1px solid white;
-  background-color: $base-orange;
+  background-color: $base-blue;
   text-align: center;
-  font-size: $font-size-h4;
   color: white;
+  @media (min-width: $screen-sm-min) {
+    font-size: $font-size-h4;
+  }
   &:hover {
     opacity: 1;
   }
   &.active {
-    background-color: $base-blue;
+    color: white;
+    background-color: $base-orange;
   }
 }
 
@@ -164,3 +168,20 @@ body > .ember-view > .liquid-container > .liquid-child {
 .spacer-lg   { height: 80px; }
 .spacer-xlg  { height: 120px; }
 .spacer-xxlg { height: 160px; }
+
+
+
+
+/*
+ * Hidden utensils littered throughout the site
+ * to be found.
+ */
+
+.hidden-utensil {
+  display: inline-block;
+  cursor: pointer;
+  width: 7px;
+  &.found-utensil {
+    cursor: default;
+  }
+}

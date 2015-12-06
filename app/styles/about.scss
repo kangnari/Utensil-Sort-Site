@@ -22,8 +22,14 @@
     width: 50px;
     height: auto;
     margin-left: -25px;
+    font-size: $font-size-h4;
   }
 }
+
+
+/*
+ * About.index page styling.
+ */
 
 .about-index {
   height: 100%;
@@ -44,6 +50,10 @@
   }
 }
 
+/*
+ * About.project page styling.
+ */
+
 .about-project {
   height: 100%;
   background-color: $dark-gray;
@@ -59,6 +69,10 @@
   }
 }
 
+/*
+ * About.real page styling.
+ */
+
 .about-real {
   height: 100%;
   background-color: $base-green;
@@ -72,29 +86,4 @@
   a {
     color: #FFD700;
   }
-}
-
-.center-display {
-  z-index: 2;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  -webkit-transform: translateY(-50%);
-     -moz-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-         -transform: translateY(-50%);
-  padding: 20px 64px 20px 64px;
-  text-align: center;
-}
-
-.opaque-background {
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  opacity: 0.6;
 }

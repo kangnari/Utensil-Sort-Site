@@ -1,0 +1,80 @@
+/*------------------------------*\
+  #ABOUT
+\*------------------------------*/
+
+
+/*
+ * Base design page styling.
+ * Standard across all about pages.
+ */
+
+.design {
+  height: 100%;
+  .ember-view {
+    height: 100%;
+  }
+  .bounce-down, .bounce-up {
+    width: 50px;
+    height: auto;
+    margin-left: -25px;
+    height: 100%;
+  }
+}
+
+/*
+ * Design.index page styling.
+ */
+
+.design-index {
+  position: relative;
+  padding-top: 40px;
+  height: 100%;
+  background: url("images/design-spoon.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+     -moz-background-size: cover;
+       -o-background-size: cover;
+          background-size: cover;
+  @media (min-width: $screen-sm-min) {
+    padding-left: 30px;
+  }
+
+  h1, h2 {
+    color: $base-gray;
+  }
+
+  h1 {
+    margin-top: 0px;
+    text-align: center;
+    letter-spacing: 10px;
+    font-weight: bold;
+    @media (min-width: $screen-sm-min) {
+      font-size: 60px;
+      text-align: left;
+    }
+  }
+
+  .bounce-down {
+    height: auto;
+    font-size: $font-size-h4;
+    color: $base-gray;
+  }
+}
+
+.design-table-contents {
+  display: none;
+  @media (min-width: $screen-sm-min) {
+    display: block;
+    position: absolute;
+    top: 40%;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 0px;
+  }
+  a {
+    @include remove-link($base-blue);
+    color: $base-blue;
+    font-size: $font-size-h3;
+    font-weight: normal;
+  }
+}

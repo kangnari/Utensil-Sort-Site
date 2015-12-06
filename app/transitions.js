@@ -110,4 +110,15 @@ export default function() {
       duration: animationTime
     })
   );
+
+  this.transition(
+    this.fromRoute('design.index'),
+    this.toRoute(['design.criteria', 'design.choices', 'design.feasibility']),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  )
 }

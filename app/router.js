@@ -6,7 +6,11 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('design');
+  this.route('design', function() {
+    this.route('criteria');
+    this.route('choices');
+    this.route('feasibility');
+  });
   this.route('implementation');
   this.route('results');
   this.route('conclusion');

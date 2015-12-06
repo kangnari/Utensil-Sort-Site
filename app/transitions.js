@@ -89,6 +89,8 @@ export default function() {
     })
   );
 
+  // ABOUT TRANSITIONS
+
   this.transition(
     this.fromRoute('about.index'),
     this.toRoute('about.project'),
@@ -111,6 +113,8 @@ export default function() {
     })
   );
 
+  // DESIGN TRANSITIONS
+
   this.transition(
     this.fromRoute('design.index'),
     this.toRoute(['design.criteria', 'design.choices', 'design.feasibility']),
@@ -120,5 +124,27 @@ export default function() {
     this.reverse('toDown', {
       duration: animationTime
     })
-  )
+  );
+
+  this.transition(
+    this.fromRoute('design.criteria'),
+    this.toRoute(['design.choices', 'design.feasibility']),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+  this.transition(
+    this.fromRoute('design.choices'),
+    this.toRoute('design.feasibility'),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
 }

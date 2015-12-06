@@ -16,7 +16,7 @@ export default Ember.Route.extend({
    * on route enter, and remove it on route exit.
    *
    * @function wheelHandler
-   * memberof AboutIndexRoute
+   * memberof DesignIndexRoute
    *
    * @param {object} e -- wheel event
    */
@@ -33,7 +33,7 @@ export default Ember.Route.extend({
      * Called after all other normal model hooks.
      *
      * @funcion didTransition
-     * @memberof AboutIndexRoute
+     * @memberof DesignIndexRoute
      */
     didTransition: function() {
       this._onScroll = this.wheelHandler.bind(this);
@@ -47,7 +47,7 @@ export default Ember.Route.extend({
      * Need to remove the wheelHandler listener to route exit.
      *
      * @funcion didTransition
-     * @memberof AboutIndexRoute
+     * @memberof DesignIndexRoute
      */
     willTransition: function(transition) {
       document.body.removeEventListener('wheel', this._onScroll, true);

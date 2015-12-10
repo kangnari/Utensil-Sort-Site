@@ -1,8 +1,7 @@
 import Ember from 'ember';
 
 /**
- * Design criteria route. Need to set transitions
- * appropriately for animations.
+ * Design criteria route.
  *
  * @class DesignCriteriaRoute
  * @extends App.Route

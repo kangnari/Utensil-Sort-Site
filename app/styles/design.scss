@@ -21,6 +21,21 @@
     height: auto;
     margin-left: -25px;
   }
+  .nav {
+    width: 100%;
+    background-color: white;
+    a {
+      border-radius: 0px;
+      color: $base-blue;
+    }
+    .active {
+      background-color: $base-gray;
+      color: white;
+    }
+  }
+  .navbar-nav {
+    margin: 0px 0px;
+  }
 }
 
 /*
@@ -29,29 +44,91 @@
 
 .design-index {
   position: relative;
-  padding-top: 40px;
   height: 100%;
-  background: url("images/design-spoon.jpg") no-repeat center center fixed;
-  -webkit-background-size: cover;
-     -moz-background-size: cover;
-       -o-background-size: cover;
-          background-size: cover;
-  @media (min-width: $screen-sm-min) {
-    padding-left: 30px;
-  }
-
-  h1, h2 {
-    color: $base-gray;
-  }
 
   h1 {
-    margin-top: 0px;
     text-align: center;
     letter-spacing: 10px;
     font-weight: bold;
+  }
+
+  h1, h2 {
+    color: white;
+  }
+
+  .expand {
+    position: absolute;
+    background: $base-gray;
+    border-radius: 50%;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+       -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+           -transform: translate(-50%, -50%);
+  }
+
+  .design-index-text {
+    position: absolute;
+    left: 10%;
+    right: 10%;
     @media (min-width: $screen-sm-min) {
-      font-size: 60px;
-      text-align: left;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+         -moz-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+             -transform: translateY(-50%);
+      -webkit-animation: move-text-up 1s forwards;
+         -moz-animation: move-text-up 1s forwards;
+          -ms-animation: move-text-up 1s forwards;
+             -animation: move-text-up 1s forwards;
+      -webkit-animation-delay: 1s;
+         -moz-animation-delay: 1s;
+          -ms-animation-delay: 1s;
+             -animation-delay: 1s;
+    }
+    @media (min-width: $screen-md-min) {
+      left: 20%;
+      right: 20%;
+    }
+
+    .design-table-contents {
+      opacity: 0;
+      height: 0;
+      h2 {
+        margin-top: 30px;
+        text-align: center;
+      }
+      td {
+        padding-top: 10px;
+        padding-bottom: 20px;
+      }
+      a {
+        text-decoration: underline;
+        color: $base-blue;
+        font-size: $font-size-h3;
+        font-weight: normal;
+      }
+      span {
+        display: block;
+        color: white;
+        font-size: $font-size-h4;
+        @media (min-width: $screen-sm-min) {
+          display: inline-block;
+          margin-left: 20px;
+        }
+      }
+      -webkit-animation: fadeIn 0.5s forwards;
+         -moz-animation: fadeIn 0.5s forwards;
+          -ms-animation: fadeIn 0.5s forwards;
+             -animation: fadeIn 0.5s forwards;
+      -webkit-animation-delay: 2.25s;
+         -moz-animation-delay: 2.25s;
+          -ms-animation-delay: 2.25s;
+             -animation-delay: 2.25s;
     }
   }
 
@@ -62,21 +139,6 @@
   }
 }
 
-.design-table-contents {
-  display: none;
-  @media (min-width: $screen-sm-min) {
-    display: block;
-    position: absolute;
-    top: 40%;
-  }
-  ul {
-    list-style-type: none;
-    padding-left: 0px;
-  }
-  a {
-    @include remove-link($base-blue);
-    color: $base-blue;
-    font-size: $font-size-h3;
-    font-weight: normal;
-  }
+.design-image, .design-movement, .design-navigation {
+  padding: 60px;
 }

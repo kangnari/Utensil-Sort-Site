@@ -27,6 +27,17 @@ export default Ember.Route.extend({
     }
   },
 
+  /**
+   * Ember hook called after the model is resolved.
+   * 
+   * @function afterModel
+   * @memberof DesignIndexRoute
+   */
+  afterModel: function() {
+    var controller = this.controllerFor('design');
+    controller.set('notIndex', false);
+  },
+
   actions: {
     /**
      * Ember action fired after a successful transition.

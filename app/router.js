@@ -8,8 +8,9 @@ var Router = Ember.Router.extend({
 Router.map(function() {
   this.route('design', function() {
     this.route('criteria');
-    this.route('choices');
-    this.route('feasibility');
+    this.route('image');
+    this.route('navigation');
+    this.route('movement');
   });
   this.route('implementation');
   this.route('results');

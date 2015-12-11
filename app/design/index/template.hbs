@@ -1,26 +1,51 @@
 <div class="design-index">
-  <h1>DESIGN</h1>
-  <div class="design-table-contents">
-    <h2>Table of Contents</h2>
-    <ul>
-      <li>
-        {{#link-to 'design.criteria'}}
-          Criteria
-        {{/link-to}}
-      </li>
-      <li>
-        {{#link-to 'design.choices'}}
-          Choices
-        {{/link-to}}
-      </li>
-      <li>
-        {{#link-to 'design.feasibility'}}
-          Feasibility
-        {{/link-to}}
-      </li>
-    </ul>
+  <div class="expand"></div>
+  <div class="design-index-text move-text-up">
+    <h1>DESIGN</h1>
+    <div class="design-table-contents">
+      <h2>Table of Contents</h2>
+      <table>
+        <tr>
+          <td>
+            {{#link-to 'design.criteria'}}
+              Criteria
+            {{/link-to}}
+          </td>
+          <td>
+            <span>list of design criteria</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{#link-to 'design.image'}}
+              Image Processing Algorithm
+            {{/link-to}}
+          </td>
+          <td>
+            <span>utensil and obstacle detection</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{#link-to 'design.navigation'}}
+              Navigation
+            {{/link-to}}
+          </td>
+          <td>
+            <span>path planning</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{#link-to 'design.movement'}}
+              Movement
+            {{/link-to}}
+          </td>
+          <td>
+            <span>control and error correction</span>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
-  {{#link-to "design.criteria" class="bounce-down"}}
-    <i class="glyphicon glyphicon-chevron-down"></i>
-  {{/link-to}}
 </div>

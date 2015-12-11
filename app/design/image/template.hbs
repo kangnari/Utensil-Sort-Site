@@ -1,0 +1,35 @@
+<div class="design-image">
+  <div>
+    <h1>Image Classification Algorithm</h1>
+    <p class="lead">
+      In the following section, we describe in detail the image classification algorithm we developed to distinguish between forks, knives, and spoons. While there are machine-learning techniques that can be trained to correctly classify such images, we wanted to develop something “intuitive” that would more directly use the differences in utensil shapes that are obvious to a human viewer for classification. Developing such an algorithm proved quite complex and required several attempts.
+    </p>
+  </div>
+  <div>
+    <h2>Initial Attempt</h2>
+    <p>
+      Our initial idea was to use two commonly used feature/shape detection algorithms to differentiate between forks, knives, and spoons.
+    </p>
+    <p>
+      To differentiate forks from the other two utensil types, we decided to use the Harris Corner detector algorithm. This transform assigns every pixel in an image a score which relates to its “corner-ness”, where a corner is defined as a point with a high image gradient in most directions. If any given utensil was detected to have multiple corners after applying this transform, the system would classify the utensil as a fork.
+    </p>
+    <p>
+      To differentiate spoons from knives, we planned to use the Hough Transform - a tranform commonly used to detect circles and ellipses in images - to detect the elliptical head of the spoon. The Hough Transform iterates through image pixels and possible radial lengths and assigns a liklihood score to each pixel. The presence of a pixel in the transform with a very high value indicates the existence of an ellipse centered at that pixel. Hence, if such a pixel existed after applying the transform on a utensil image, the system would classify the utensil as a spoon.
+    </p>
+    <p>
+      If the supplied utensil was found to be neither a fork nor a spoon, the system would classify the utensil as a knife.
+    </p>
+  </div>
+  <div>
+    <h2>Initial Results</h2>
+    <p>
+      Our initial algorithm attempt was not very successful. The Harris corner detector was somewhat successful in differentiating forks from knives and spoons. This can be seen in the following image of all three utensil types with a corresponding image of Harris corner scores. The points on the fork spokes are clearly local maxima. 
+    </p>
+    <p>
+      However, the above image also demonstrates the main issue with the Harris corner detection method. Namely, the Harris corner detection algorithm is quite sensitive and easily confused by reflections or any texture on the utensils.
+    </p>
+    <p>
+      The issue with the Hough transform was that it required very good edge detection, which was difficult to ensure. Furthermore, for reasonably large images and a variable estimated ellipse size, the transform took too long to run.
+    </p>
+  </div>
+</div>

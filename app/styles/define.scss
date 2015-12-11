@@ -70,6 +70,10 @@ $base-green: #1FD26A;
   left: 50%;
   top: 0;
   -webkit-animation: bounce-up 2s infinite;
+     -moz-animation: bounce-up 2s infinite;
+      -ms-animation: bounce-up 2s infinite;
+         -animation: bounce-up 2s infinite;
+
 }
 
 /*
@@ -135,6 +139,64 @@ $base-green: #1FD26A;
   }
 }
 
+/*
+ * Expanding background.
+ */
+
+.expand {
+  -webkit-animation: expand 1s forwards;
+     -moz-animation: expand 1s forwards;
+      -ms-animation: expand 1s forwards;
+         -animation: expand 1s forwards;
+  -webkit-animation-delay: 1s;
+     -moz-animation-delay: 1s;
+      -ms-animation-delay: 1s;
+         -animation-delay: 1s;
+}
+
+
+/*
+ * Actual animation for expanding background.
+ */
+
+@keyframes expand {
+  0% {
+    width: 350px;
+    height: 350px;
+  }
+  10% {
+    width: 350px;
+    height: 350px;
+  }
+  30% {
+    width: 225px;
+    height: 225px;
+  }
+  50% {
+    width: 225px;
+    height: 225px;
+  }
+  100% {
+    width: 200%;
+    height: 200%;
+  }
+}
+
+/*
+ * Move text to top of page.
+ */
+
+@keyframes move-text-up {
+  0% {
+    top: 50%;
+  }
+  50% {
+    top: 50%;
+  }
+  100% {
+    top: 30%;
+  }
+}
 
 /*
  * Utensil shakes if found.
@@ -178,6 +240,19 @@ $base-green: #1FD26A;
   }
   100% {
     -webkit-transform: rotate(0deg);
+  }
+}
+
+/*
+ * Generic fade in animation.
+ */
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

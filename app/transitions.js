@@ -117,7 +117,7 @@ export default function() {
 
   this.transition(
     this.fromRoute('design.index'),
-    this.toRoute(['design.criteria', 'design.choices', 'design.feasibility']),
+    this.toRoute(['design.criteria', 'design.image', 'design.navigation', 'design.movement']),
     this.use('toUp', {
       duration: animationTime
     }),
@@ -128,7 +128,7 @@ export default function() {
 
   this.transition(
     this.fromRoute('design.criteria'),
-    this.toRoute(['design.choices', 'design.feasibility']),
+    this.toRoute(['design.image', 'design.navigation', 'design.movement']),
     this.use('toUp', {
       duration: animationTime
     }),
@@ -138,13 +138,38 @@ export default function() {
   );
 
   this.transition(
-    this.fromRoute('design.choices'),
-    this.toRoute('design.feasibility'),
+    this.fromRoute('design.image'),
+    this.toRoute(['design.navigation', 'design.movement']),
     this.use('toUp', {
       duration: animationTime
     }),
     this.reverse('toDown', {
       duration: animationTime
+    })
+  );
+
+  this.transition(
+    this.fromRoute('design.navigation'),
+    this.toRoute('design.movement'),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+  // VALUE CONSTRAINTS
+
+  // navbar transition on login/logout
+  this.transition(
+    this.hasClass('animated-nav'),
+    this.toValue(true),
+    this.use('toDown', {
+      duration: 1000
+    }),
+    this.reverse('toUp', {
+      duration: 1000
     })
   );
 }

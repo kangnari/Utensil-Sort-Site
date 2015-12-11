@@ -1,4 +1,32 @@
 <div class="design">
+  {{#liquid-if notIndex class="animated-nav navbar-fixed-top"}}
+    <ul class="nav navbar-nav nav-tabs">
+      <li>
+        {{#link-to 'design.index'}}
+          Index
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'design.criteria'}}
+          Criteria
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'design.image'}}
+          Image Processing Algorithm
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'design.navigation'}}
+          Navigation
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'design.movement'}}
+          Movement
+        {{/link-to}}
+      </li>
+    </ul>
+  {{/liquid-if}}
   {{liquid-outlet}}
 </div>
-

@@ -14,11 +14,20 @@ html {
  * Base body styling. Margins are required to
  * clear space for side navbar.
  */
+
 body {
   height: 100%;
   margin-right: 100px;
   @media (min-width: $screen-sm-min) {
     margin-right: 200px;
+  }
+}
+
+p {
+  font-weight: 300;
+  font-size: 14px;
+  @media (min-width: $screen-sm-min) {
+    font-size: 16px;
   }
 }
 
@@ -214,3 +223,23 @@ body > .ember-view > .liquid-container > .liquid-child {
     cursor: default;
   }
 }
+
+/*
+ * Figures for reference in text.
+ */
+
+.figure {
+  max-width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  img {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  span {
+    display: block;
+    font-weight: 300;
+  }
+}
+

@@ -1,1 +1,46 @@
-{{outlet}}
+<div class="design-navigation">
+  <div>
+    <h1>Navigation and Obstacle Avoidance</h1>
+    <p class="lead">
+      For navigation, we developed a generalized path-planning algorithm that allows the Zumy to reliably retrieve and deliver utensils without running into obstacles within a predetermined field of movement. In the following section, we describe our design in detail.
+    </p>
+  </div>
+  <div>
+    <h2>Implementation</h2>
+    <p>
+      Our navigation algorithm uses Dijkstra's on a grid of real-world coordinates to determine an optimized obstacle-free path to and from a utensil pile.
+    </p>
+    <p>
+      Before performing any sorting maneuvers, we first take an image of the field of movement and compute a homography to associate pixel locations to real-world coordinates. When determining obstacle locations, our algorithm only looks at a given number of equally spaced pixel points. We determine whether a pixel points falls on an obstacle or on open ground by thresholding its intensity. Through this process, we create a binary matrix representing "obstacle" and "obstacle-free" points (see Figure 1). 
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/image-to-matrix.png" alt="Connection between an image and its obstacle matrix.">
+      <span>
+        <b>Figure 1:</b> Connection between an image (on the left) and its obstacle matrix (on the right). Note that the number of displayed points has been reduced for clarity.
+      </span>
+    </div>
+    <p>
+      Using a starting and ending point for the Zumy, we run Dijkstra's algorithm on the obstacle matrix. In our implementation of Dijkstra's, the cost of moving onto an obstacle point is set to be prohibitively high. The cost of moving onto a point near an obstacle point is also high to encourage safe maneuvers, but is not prohibitively so. See Figure 2 for a graphical representation of cost assignment.
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/dijkstra.png" alt="Cost assignment in Dijkstra's.">
+      <span>
+        <b>Figure 2:</b> Example of cost assignment in Dijkstra's.
+      </span>
+    </div>
+    <p>
+      Once all points have been assigned a cost, the algorithm looks for the sequence of points corresponding to the lowest cost path and subsequently sends it to the Zumy for movement, as shown in Figure 3.
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/path-sequence.png" alt="Sequence of points to goal.">
+      <span>
+        <b>Figure 3:</b> Sequence of points (shown in red dots) that would be sent to the Zumy for spoon drop-off.
+      </span>
+    </div>
+  </div>
+  <p class="text-center">
+    {{#link-to 'design.movement'}}
+      Read more about the process behind Zumy movement.
+    {{/link-to}}
+  </p>
+</div>

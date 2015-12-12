@@ -36,6 +36,9 @@
   .navbar-nav {
     margin: 0px 0px;
   }
+  .animated-nav.liquid-container {
+    height: auto;
+  }
 }
 
 /*
@@ -45,6 +48,7 @@
 .design-index {
   position: relative;
   height: 100%;
+  overflow: hidden;
 
   h1 {
     text-align: center;
@@ -75,12 +79,22 @@
     position: absolute;
     left: 10%;
     right: 10%;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+       -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+           -transform: translateY(-50%);
+    @media (max-width: $screen-sm-min) {
+      -webkit-animation: move-text-all-up 1s forwards;
+         -moz-animation: move-text-all-up 1s forwards;
+          -ms-animation: move-text-all-up 1s forwards;
+             -animation: move-text-all-up 1s forwards;
+      -webkit-animation-delay: 1s;
+         -moz-animation-delay: 1s;
+          -ms-animation-delay: 1s;
+             -animation-delay: 1s;
+    }
     @media (min-width: $screen-sm-min) {
-      top: 50%;
-      -webkit-transform: translateY(-50%);
-         -moz-transform: translateY(-50%);
-          -ms-transform: translateY(-50%);
-             -transform: translateY(-50%);
       -webkit-animation: move-text-up 1s forwards;
          -moz-animation: move-text-up 1s forwards;
           -ms-animation: move-text-up 1s forwards;
@@ -141,4 +155,6 @@
 
 .design-image, .design-movement, .design-navigation {
   padding: 60px;
+  height: 100%;
+  overflow-y: scroll;
 }

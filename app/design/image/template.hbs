@@ -2,7 +2,7 @@
   <div>
     <h1>Image Classification Algorithm</h1>
     <p class="lead">
-      In the following section, we describe in detail the image classification algorithm we developed to distinguish between forks, knives, and spoons. While there are machine-learning techniques that can be trained to correctly classify such images, we wanted to develop something “intuitive” that would more directly use the differences in utensil shapes that are obvious to a human viewer for classification. Developing such an algorithm proved quite complex and required several attempts.
+      In the following section, we describe in detail the image classification algorithm we developed to distinguish between forks, knives, and spoons. While there are machine-learning techniques that can be trained to correctly classify such images, we wanted to develop something “intuitive” that would better utilize characteristics obvious to a human viewer. Developing such an algorithm proved quite complex and required several attempts.
     </p>
   </div>
   <div>
@@ -11,10 +11,16 @@
       Our initial idea was to use two commonly used feature/shape detection algorithms to differentiate between forks, knives, and spoons.
     </p>
     <p>
-      To differentiate forks from the other two utensil types, we decided to use the Harris Corner detector algorithm. This transform assigns every pixel in an image a score which relates to its “corner-ness”, where a corner is defined as a point with a high image gradient in most directions. If any given utensil was detected to have multiple corners after applying this transform, the system would classify the utensil as a fork.
+      To differentiate forks from the other two utensil types, we decided to use the Harris Corner detection algorithm. This transform assigns every image pixel a score indicating its “corner-ness”, where a corner is defined as a point with a high image gradient in most directions. If any given utensil was detected to have multiple corners after applying this transform, the system would classify the utensil as a fork.
     </p>
+    <div class="figure">
+      <img src="assets/images/design/image-process-1.png" alt="Expected output of Harris Corner detector and Hough Transform.">
+      <span>
+        <b>Figure 1:</b> Expected output of the Harris Corner detector (on the left) and the Hough Transform (on the right).
+      </span>
+    </div>
     <p>
-      To differentiate spoons from knives, we planned to use the Hough Transform - a tranform commonly used to detect circles and ellipses in images - to detect the elliptical head of the spoon. The Hough Transform iterates through image pixels and possible radial lengths and assigns a liklihood score to each pixel. The presence of a pixel in the transform with a very high value indicates the existence of an ellipse centered at that pixel. Hence, if such a pixel existed after applying the transform on a utensil image, the system would classify the utensil as a spoon.
+      To differentiate spoons from knives, we planned to use the Hough Transform - a tranform commonly used to detect circles and ellipses in images - to detect the elliptical head of the spoon. The Hough Transform iterates through image pixels and assigns liklihood scores indicating the probability that an ellipse of given radial lengths is centered at a given pixel. Hence, if our system found a pixel in the transform with a very high score (indicating the existence of an ellipse), the utensil would be classified as a spoon.
     </p>
     <p>
       If the supplied utensil was found to be neither a fork nor a spoon, the system would classify the utensil as a knife.
@@ -23,13 +29,90 @@
   <div>
     <h2>Initial Results</h2>
     <p>
-      Our initial algorithm attempt was not very successful. The Harris corner detector was somewhat successful in differentiating forks from knives and spoons. This can be seen in the following image of all three utensil types with a corresponding image of Harris corner scores. The points on the fork spokes are clearly local maxima. 
+      As seen in Figure 2, the Harris corner detector was somewhat successful in differentiating forks from knives and spoons. The points on the fork spokes are clearly local maxima, and show up as white points on the transform.
     </p>
     <p>
-      However, the above image also demonstrates the main issue with the Harris corner detection method. Namely, the Harris corner detection algorithm is quite sensitive and easily confused by reflections or any texture on the utensils.
+      However, the transformed spoon in Figure 2 also demonstrates the main issue with the Harris corner detection method. Although the algorithm reliably detected fork prongs, we found that it was quite sensitive and easily became confused by any reflections and/or texture patterns on the utensils.
     </p>
+    <div class="figure">
+      <img src="assets/images/design/image-process-result-1.png" alt="Binary image of the utensils and their associated outputs from the Harris corner detection algorithm.">
+      <span>
+        <b>Figure 2:</b> Binary image of the utensils (on the left), and the associated output from the Harris corner detection algorithm (on the right).
+      </span>
+    </div>
     <p>
-      The issue with the Hough transform was that it required very good edge detection, which was difficult to ensure. Furthermore, for reasonably large images and a variable estimated ellipse size, the transform took too long to run.
+      Unfortunately, we also had little luck with the Hough transform. The issue with the Hough transform was that it required high edge contrast for good ellipse detection, which was difficult to ensure. Furthermore, the transform had a tendency to run for an unreasonably long time on larger images and/or images with variable estimated ellipse sizes.
     </p>
   </div>
+  <div>
+    <h2>Final Algorithm</h2>
+    <p>
+      Our final algorithm focused on leveraging the differences in the contours of the utensils. Although this implementation is potentially less resilient to utensil variability, it reliably classifies a set collection of utensils, regardless of image quality and utensil orientation.
+    </p>
+    <p>
+      The algorithm begins with an image of a fork, knife, or spoon, as shown in Figure 3. Note that the objects are at different rotations, and that the image quality is rather low. Additionally, note that the images have not been converted to gray-scale or binary.
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/image-process-2.png" alt="Images of utensils taken using the lab webcams.">
+      <span>
+        <b>Figure 3:</b> Images of utensils taken using the lab webcams.
+      </span>
+    </div>
+  </div>
+  <p>
+    Next the algorithm uses thresholding to convert the NxMx3 (RGB) matrix representing the image into a set of points that indicate locations of image pixels that lie within the utensil. All other points are discarded. The result of the operation on the images shown in Figure 3 can be seen in Figure 4.
+  </p>
+  <div class="figure">
+    <img src="assets/images/design/image-process-2-scatter.png" alt="Scatter plots of sampled utensil images">
+    <span>
+      <b>Figure 4:</b> Scatter plots of sampled points from utensil images. With the exception of one erroneous point in the fork plot, thresholding produces reasonably good representations of the utensils.
+    </span>
+  </div>
+  <p>
+    The algorithm then finds the line of best fit (using np.polyfit; see Figure 5) for the retrieved data points and rotates the points by the negative of the angle between the line of best fit and the x-axis. This operation ensures that the transformed utensil image lies length-wise along the x-axis. After performing the rotation, the algorithm centers the points such that they have zero-mean (i.e. the utensil axis lies on top of the x-axis).
+  </p>
+  <div class="figure">
+    <img src="assets/images/design/image-process-2-line.png" alt="Scatter plots with lines of best fit">
+    <span>
+      <b>Figure 5:</b> Scatter plots of sampled images with associated lines of best fit.
+    </span>
+  </div>
+  <p>
+    Once the utensil points have been rotated and centered, we take a “projection” of the data along the x-axis to convert the 2D set of scatter points into 1D vectors, as shown in Figures 6 and 7. This projection can be done in multiple ways and by using multiple parameters, but it always looks at some statistic of the data along a cross-section parallel to the y-axis. We discovered that the best projection function took the difference between the minimum and maximum points along a cross section after excluding any obvious outliers/erroneous points.
+  </p>
+  <div class="figure">
+    <img src="assets/images/design/image-process-2-projection.png" alt="Projection operation on scatter plot.">
+    <span>
+      <b>Figure 6:</b> Projection operation on a rotated and centered scatter plot.
+    </span>
+  </div>
+  <div class="figure">
+    <img src="assets/images/design/image-process-2-projections.png" alt="Projections of utensils.">
+    <span>
+      <b>Figure 7:</b> Results of taking the projections of the utensils. Knife (far left), fork (middle), spoon (far right).
+    </span>
+  </div>
+  <p>
+    We can see from Figure 7 that the resulting 1D vectors indicate that the three utensils have very distinctive shapes. Our classification algorithm first attempts to determine whether the displayed utensil is a fork by checking for a steep drop, which corresponds with the end of the fork prongs, in the curve (see Figure 8). If no steep slope is found, the algorithm next attempts to determine if the utensil is a spoon by looking at the difference between the average and maximum heights of the spoon projection, which corresponds with the large width of the spoon head (see Figure 8).
+  </p>
+  <div class="figure">
+    <img src="assets/images/design/image-process-2-classification.png" alt="Classification operation on projections.">
+    <span>
+      <b>Figure 8:</b> Classification operation on the utensil projections.
+    </span>
+  </div>
+  <p>
+    If the utensil is determined to be neither a fork nor a spoon, our algorithm classifies the utensil as a knife. We decided to classify the knife by elminiation because knives tend to vary in design far more than forks and spoons do. The image classification results can be seen in Figure 9.
+  </p>
+  <div class="figure">
+    <img src="assets/images/design/image-process-result-2.png" alt="Results of classification.">
+    <span>
+      <b>Figure 9:</b> Classification results on a new set of utensils. The resulting outputs are displayed above the utensil image.
+    </span>
+  </div>
+  <p class="text-center">
+    {{#link-to 'design.navigation'}}
+      Read more about our navigation algorithm.
+    {{/link-to}}
+  </p>
 </div>

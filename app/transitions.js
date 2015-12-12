@@ -165,11 +165,12 @@ export default function() {
   this.transition(
     this.hasClass('animated-nav'),
     this.toValue(true),
-    this.use('toDown', {
-      duration: 1000
+    this.use('fade', {
+      duration: animationTime,
+      delay: animationTime
     }),
     this.reverse('toUp', {
-      duration: 1000
+      duration: animationTime
     })
   );
 }

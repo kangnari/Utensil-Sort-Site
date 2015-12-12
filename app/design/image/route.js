@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 /**
- * Design criteria route.
+ * Design image route.
  *
  * @class DesignImageRoute
  * @extends App.Route

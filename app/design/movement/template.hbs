@@ -1,1 +1,53 @@
-{{outlet}}
+<div class="design-movement">
+  <div>
+    <h1>Movement</h1>
+    <p class="lead">
+      Working with the unreliability of the Zumy was probably one of the most difficult parts of this project. To reliably navigate our Zumy, we implemented a control system and an error correction system. In the following section, we describe the designs for both in detail.
+    </p>
+  </div>
+  <div>
+    <h2>Setup</h2>
+    <p>
+      Our setup places an AR tag at the origin defining the world frame and an AR tag on the Zumy. The transform between these two is used to determine theta and (x, y).
+    </p>
+    <p>
+      In the following description of navigation control, we define the zumy position and heading as shown in Figure 1. The zumy's position is defined to be the (x, y) coordinates of the zumy’s center relative to the world origin. The zumy heading is defined to be the angle theta.
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/movement-params.png" alt="System parameters.">
+      <span>
+        <b>Figure 1:</b> Graphical representation of the zumy's position and heading.
+      </span>
+    </div>
+  </div>
+  <div>
+    <h2>Proportional Speed Controller</h2>
+    <p>
+      After extensive testing, we discovered that the Zumy responded slowly to new commands, which in turn caused it to frequently overshoot its desired position. To address this issue and better regulate Zumy speed, we implemented a proportional controller.
+    </p>
+    <p>
+      The proportional speed controller is responsible for sending an appropriate speed command (twist) to the Zumy. Any time the Zumy has to turn, the controller sets the angular speed to be proportional (within bounds) to the difference between the Zumy’s current heading and its desired heading. Similarly, whenever the Zumy has to move linearly, the controller sets the linear velocity to be proportional (within bounds) to the distance between the Zumy’s current position and its desired position. 
+    </p>
+    <p>
+      With this implementation, the Zumy slows down as it approaches its desired heading or desired position. However, while the controller does minimize overshoot, it does so at the cost of slower overall navigation times.
+    </p>
+    <p>
+      Note that we always send the Zumy either an angular velocity or a linear velocity, but never both at the same time. In other words, the Zumy only ever moves straight forward/backward or turns left/right in place. In addition to making control simpler, this ensures that our obstacle avoidance setup can accurately run. We also found that this constraint minimized the unreliability of the Zumy.
+    </p>
+  </div>
+  <div>
+    <h2>Error Correction</h2>
+    <p>
+      Theoretically, our design plans for the Zumy to move only along the x or y direction at any given time. To maintain this constraint, we originally forced the Zumy to correct any deviations in the heading by turning in place and any deviations in the position by moving along only one axis at a time. Unfortunately, not only was this method of error correction slow, it also often exacerbated any pre-existing errors.
+    </p>
+    <p>
+      Hence, in practice, we now allow the Zumy to travel along an arbitrary axis as necessary to correct itself, as shown in Figure 2. Although this method of error correction technically violates our original design, it greatly reduces operation times and better mitigates errors due to over/undershoots.
+    </p>
+    <div class="figure">
+      <img src="assets/images/design/error-correction.png" alt="Error correction.">
+      <span>
+        <b>Figure 2:</b> Theoretical vs practical trajectory due to non-ideal movements.
+      </span>
+    </div>
+  </div>
+</div>

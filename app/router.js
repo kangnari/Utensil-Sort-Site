@@ -12,7 +12,10 @@ Router.map(function() {
     this.route('navigation');
     this.route('movement');
   });
-  this.route('implementation');
+  this.route('implementation', function() {
+    this.route('hardware');
+    this.route('software');
+  });
   this.route('results');
   this.route('conclusion');
   this.route('team');

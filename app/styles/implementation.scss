@@ -1,0 +1,67 @@
+/*------------------------------*\
+  #IMPLEMENTATION
+\*------------------------------*/
+
+/*
+ * Base implementation page styling.
+ * Standard across all implementation pages.
+ */
+
+.implementation {
+  height: 100%;
+  .ember-view {
+    height: 100%;
+  }
+  .animated-nav.liquid-container {
+    height: auto;
+  }
+}
+
+/*
+ * implementation.index page styling.
+ */
+
+.implementation-index {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+
+  h1 {
+    text-align: center;
+    letter-spacing: 10px;
+    font-weight: bold;
+  }
+  .implementation-index-text {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    @media (min-width: $screen-md-min) {
+      left: 20%;
+      right: 20%;
+    }
+    h2 {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .implementation-table-contents {
+      td {
+        padding-top: 10px;
+        padding-bottom: 20px;
+      }
+      a {
+        text-decoration: underline;
+        color: $base-blue;
+        font-size: $font-size-h3;
+        font-weight: normal;
+      }
+      span {
+        display: block;
+        font-size: $font-size-h4;
+        @media (min-width: $screen-sm-min) {
+          display: inline-block;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+}

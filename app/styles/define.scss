@@ -15,10 +15,16 @@ $base-orange: #ff9936;
 $base-blue: #00CBE9;
 
 /*
+ * Base light gray used throughout the site.
+ */
+
+$light-gray: #6E6E6E;
+
+/*
  * Base gray used throughout the site.
  */
 
-$base-gray: #6E6E6E;
+$base-gray: #373A43;
 
 /*
  * Base dark gray used throughout the site.
@@ -42,6 +48,119 @@ $base-green: #1FD26A;
 
 
 /*------------------------------*\
+  #MIXINS
+\*------------------------------*/
+
+/*
+ * Basic cross-site compatible css3 animation mixin.
+ * Include this in any class that requires an
+ * animation.
+ *
+ * ex. @include animate(0.3s);
+ */
+
+@mixin animate($duration) {
+  -webkit-transition: all $duration ease;
+     -moz-transition: all $duration ease;
+      -ms-transition: all $duration ease;
+          transition: all $duration ease;
+}
+
+/*
+ * More durable cross-site compatible css3 animation mixin.
+ * Include this in heavier animations.
+ *
+ * ex. @include animation('expand 1s forwards')
+ */
+
+@mixin animation($animate...) {
+  $len: length($animate);
+  $animations: '';
+
+  @for $i from 1 through $len {
+    $animations: #{ $animations + nth($animate, $i) };
+    @if $i < $len {
+      $animations: #{ $animations + ", " };
+    }
+
+    -webkit-animation: $animations;
+       -moz-animation: $animations;
+        -ms-animation: $animations;
+            animation: $animations;
+  }
+}
+
+/*
+ * Cross-site compatible css3 keyframes mixin.
+ * Use this when defining heavier animations.
+ */
+
+@mixin keyframes($animationName) {
+  @-webkit-keyframes #{ $animationName } {
+    @content;
+  }
+  @-moz-keyframes #{ $animationName } {
+    @content;
+  }
+  @-ms-keyframes #{ $animationName } {
+    @content;
+  }
+  @keyframes #{ $animationName } {
+    @content;
+  }
+}
+
+
+/*
+ * Cross-site compatible css3 transform mixin.
+ */
+
+@mixin transform($transforms) {
+  -webkit-transform: $transforms;
+     -moz-transform: $transforms;
+      -ms-transform: $transforms;
+         -transform: $transforms;
+}
+
+/*
+ * Cross-site compatible css3 transform-origin mixin.
+ */
+
+@mixin transform-origin($origin) {
+  -webkit-transform-origin: $origin;
+     -moz-transform-origin: $origin;
+      -ms-transform-origin: $origin;
+         -transform-origin: $origin;
+}
+
+
+/*
+ * Remove default link styling.
+ */
+
+ @mixin remove-link($color) {
+  &:visited {
+    color: $color;
+    text-decoration: none;
+  }
+  &:hover {
+    color: $color;
+    text-decoration: none;
+  }
+  &:active {
+    color: $color;
+    text-decoration: none;
+  }
+  &.active {
+    color: $color;
+    text-decoration: none;
+  }
+}
+
+
+
+
+/*------------------------------*\
   #ANIMATIONS
 \*------------------------------*/
 
@@ -51,13 +170,10 @@ $base-green: #1FD26A;
  */
 
 .bounce-down {
+  @include animation('bounce-down 2s infinite');
   position: fixed;
   left: 50%;
   bottom: 0;
-  -webkit-animation: bounce-down 2s infinite;
-     -moz-animation: bounce-down 2s infinite;
-      -ms-animation: bounce-down 2s infinite;
-         -animation: bounce-down 2s infinite;
 }
 
 /*
@@ -66,34 +182,37 @@ $base-green: #1FD26A;
  */
 
 .bounce-up {
+  @include animation('bounce-up 2s infinite');
   position: fixed;
   left: 50%;
   top: 0;
-  -webkit-animation: bounce-up 2s infinite;
-     -moz-animation: bounce-up 2s infinite;
-      -ms-animation: bounce-up 2s infinite;
-         -animation: bounce-up 2s infinite;
-
 }
+
+/*
+ * Expanding background. Expands div in 1s after a
+ * 1s delay. Maintains div in expanded format.
+ */
+
+.expand {
+  @include animation('expand 1s forwards 1s');
+}
+
+/*
+ * Utensil shakes if found.
+ */
+
+.found {
+  @include animation('shake 0.5s');
+}
+
+
+
 
 /*
  * Actual animation for the bounce-down class.
  */
 
-@-webkit-keyframes bounce-down {
-  0% {
-    bottom: 0px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    bottom: 8px;
-    animation-timing-function: ease-in;
-  }
-  100% {
-    bottom:0;
-  }
-}
-@keyframes bounce-down {
+@include keyframes(bounce-down) {
   0% {
     bottom: 0px;
     animation-timing-function: ease-out;
@@ -111,7 +230,7 @@ $base-green: #1FD26A;
  * Actual animation for the bounce-up class.
  */
 
-@-webkit-keyframes bounce-up {
+@include keyframes(bounce-up) {
   0% {
     top: 0px;
     animation-timing-function: ease-out;
@@ -124,42 +243,12 @@ $base-green: #1FD26A;
     top: 0;
   }
 }
-
-@keyframes bounce-up {
-  0% {
-    top: 0px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    top: 8px;
-    animation-timing-function: ease-in;
-  }
-  100% {
-    top: 0;
-  }
-}
-
-/*
- * Expanding background.
- */
-
-.expand {
-  -webkit-animation: expand 1s forwards;
-     -moz-animation: expand 1s forwards;
-      -ms-animation: expand 1s forwards;
-         -animation: expand 1s forwards;
-  -webkit-animation-delay: 1s;
-     -moz-animation-delay: 1s;
-      -ms-animation-delay: 1s;
-         -animation-delay: 1s;
-}
-
 
 /*
  * Actual animation for expanding background.
  */
 
-@keyframes expand {
+@include keyframes(expand) {
   0% {
     width: 350px;
     height: 350px;
@@ -186,7 +275,7 @@ $base-green: #1FD26A;
  * Move text to top of page.
  */
 
-@keyframes move-text-up {
+@include keyframes(move-text-up) {
   0% {
     top: 50%;
   }
@@ -198,7 +287,7 @@ $base-green: #1FD26A;
   }
 }
 
-@keyframes move-text-all-up {
+@include keyframes(move-text-all-up) {
   0% {
     top: 50%;
   }
@@ -211,55 +300,30 @@ $base-green: #1FD26A;
 }
 
 /*
- * Utensil shakes if found.
- */
-
-.found {
-  -webkit-animation: shake 0.5s;
-     -moz-animation: shake 0.5s;
-      -ms-animation: shake 0.5s;
-         -animation: shake 0.5s;
-}
-
-/*
  * Actual animation for the shake class.
  */
 
-@-webkit-keyframes shake {
+@include keyframes(shake) {
   0% {
-    -webkit-transform: rotate(0deg);
+    @include transform(rotate(0deg));
   }
   10%, 50%, 90% {
-    -webkit-transform: rotate(30deg);
+    @include transform(rotate(30deg));
   }
   30%, 70% {
-    -webkit-transform: rotate(-30deg);
+    @include transform(rotate(-30deg));
   }
   100% {
-    -webkit-transform: rotate(0deg);
+    @include transform(rotate(0deg));
   }
 }
 
-@keyframes shake {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  10%, 50%, 90% {
-    -webkit-transform: rotate(30deg);
-  }
-  30%, 70% {
-    -webkit-transform: rotate(-30deg);
-  }
-  100% {
-    -webkit-transform: rotate(0deg);
-  }
-}
 
 /*
  * Generic fade in animation.
  */
 
-@keyframes fadeIn {
+@include keyframes(fadeIn) {
   0% {
     opacity: 0;
   }
@@ -268,47 +332,61 @@ $base-green: #1FD26A;
   }
 }
 
-
-
-
-/*------------------------------*\
-  #MIXINS
-\*------------------------------*/
-
 /*
- * Basic cross-site compatible css3 animation mixin.
- * Include this in any class that requires an
- * animation.
- *
- * ex. @include animate(0.3s);
+ * Generic fade out animation.
  */
 
-@mixin animate($duration) {
-  -webkit-transition: all $duration ease;
-     -moz-transition: all $duration ease;
-      -ms-transition: all $duration ease;
-          transition: all $duration ease;
+ @include keyframes(fadeOut) {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+ }
+
+/*
+ * Ant crawl animation.
+ */
+
+@include keyframes(stroke-offset) {
+  0% {
+    stroke-dashoffset: 10%;
+    stroke-dasharray: 0 25%;
+    fill-opacity: 0;
+  }
+  70% {
+    stroke-dasharray: 10% 0;
+  }
+  80% {
+    fill-opacity: 0;
+    stroke-dasharray: 10% 0;
+  }
+  100% {
+    fill-opacity: 1;
+    stroke-dasharray: 10% 0;
+  }
 }
 
 /*
- * Remove default link styling.
+ * Mushroom animation.
  */
 
- @mixin remove-link($color) {
-  &:visited {
-    color: $color;
-    text-decoration: none;
+@include keyframes(mushroom) {
+  0% {
+    @include transform(scaleY(0));
+    @include transform-origin(center);
   }
-  &:hover {
-    color: $color;
-    text-decoration: none;
+  40% {
+    @include transform(scaleY(1));
+    @include transform-origin(center);
   }
-  &:active {
-    color: $color;
-    text-decoration: none;
+  60% {
+    @include transform(scaleY(1));
+    @include transform-origin(center);
   }
-  &.active {
-    color: $color;
-    text-decoration: none;
+  100% {
+    @include transform(scaleY(0));
+    @include transform-origin(center);
   }
 }

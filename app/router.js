@@ -16,8 +16,10 @@ Router.map(function() {
     this.route('hardware');
     this.route('software');
   });
-  this.route('results');
-  this.route('conclusion');
+  this.route('results', function() {
+    this.route('product');
+    this.route('conclusion');
+  });
   this.route('team');
   this.route('additional');
   this.route('about', function() {

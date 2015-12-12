@@ -23,21 +23,47 @@
 
 .implementation-index {
   position: relative;
-  height: 100%;
   overflow: hidden;
+  height: 100%;
+  background-color: $base-gray;
 
   h1 {
     text-align: center;
     letter-spacing: 10px;
     font-weight: bold;
   }
+
+  svg {
+    @include animation('fadeOut 0.5s forwards 3.5s');
+    width: 100%;
+    height: 100%;
+    font-size: $font-size-h1;
+    font-weight: bold;
+    letter-spacing: 10px;
+  }
+
+  .ant-crawl {
+    @include animation('stroke-offset 2s linear forwards 1s');
+    fill: white;
+    fill-opacity: 0;
+    stroke: white;
+    stroke-dashoffset: 10%;
+    stroke-dasharray: 0 25%;
+  }
+
   .implementation-index-text {
+    @include animation('fadeIn 0.5s forwards 4.5s');
     position: absolute;
-    left: 10%;
+    top: 0;
     right: 10%;
+    left: 10%;
+    opacity: 0;
+    color: white;
     @media (min-width: $screen-md-min) {
-      left: 20%;
+      @include transform(translateY(-50%));
+      top: 50%;
       right: 20%;
+      left: 20%;
     }
     h2 {
       margin-top: 30px;
@@ -64,4 +90,10 @@
       }
     }
   }
+}
+
+.implementation-hardware, .implementation-software {
+  padding: 60px;
+  height: 100%;
+  overflow-y: scroll;
 }

@@ -159,6 +159,58 @@ export default function() {
     })
   );
 
+  // IMPLEMENTATION TRANSITIONS
+
+  this.transition(
+    this.fromRoute('implementation.index'),
+    this.toRoute(['implementation.hardware', 'implementation.software']),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+  this.transition(
+    this.fromRoute('implementation.hardware'),
+    this.toRoute('implementation.software'),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+  // RESULTS TRANSITIONS
+
+   this.transition(
+    this.fromRoute('results.index'),
+    this.toRoute(['results.product', 'results.conclusion']),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+  this.transition(
+    this.fromRoute('results.product'),
+    this.toRoute('results.conclusion'),
+    this.use('toUp', {
+      duration: animationTime
+    }),
+    this.reverse('toDown', {
+      duration: animationTime
+    })
+  );
+
+
+
+
+
   // VALUE CONSTRAINTS
 
   // navbar transition on login/logout

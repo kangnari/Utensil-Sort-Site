@@ -1,3 +1,22 @@
 <div class="implementation">
+  {{#liquid-if notIndex class="animated-nav navbar-fixed-top"}}
+    <ul class="nav navbar-nav nav-tabs">
+      <li>
+        {{#link-to 'implementation.index'}}
+          Index
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'implementation.hardware'}}
+          Hardware
+        {{/link-to}}
+      </li>
+      <li>
+        {{#link-to 'implementation.software'}}
+          Software
+        {{/link-to}}
+      </li>
+    </ul>
+  {{/liquid-if}}
   {{liquid-outlet}}
 </div>

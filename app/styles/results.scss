@@ -1,0 +1,114 @@
+/*------------------------------*\
+  #RESULTS
+\*------------------------------*/
+
+/*
+ * Base results page styling.
+ * Standard across all results pages.
+ */
+
+.results {
+  height: 100%;
+  h2 {
+    margin-top: 5px;
+  }
+  .ember-view {
+    height: 100%;
+  }
+}
+
+/*
+ * Base results index page styling.
+ */
+
+.results-index {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  .animated-letters {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    left: 10%;
+    text-align: center;
+    @media (min-width: $screen-md-min) {
+      @include transform(translateY(-50%));
+      top: 50%;
+      right: 20%;
+      left: 20%;
+    }
+    h1 {
+      @include transform(scaleY(0));
+      display: inline-block;
+      margin-left: 5px;
+      margin-right: 5px;
+      font-weight: bold;
+      &.R {
+        @include animation('mushroom 0.5s 1s ease-in forwards');
+      }
+      &.E {
+        @include animation('mushroom 0.5s 1.25s ease-in forwards');
+      }
+      &.S1 {
+        @include animation('mushroom 0.5s 1.5s ease-in forwards');
+      }
+      &.U {
+        @include animation('mushroom 0.5s 1.75s ease-in forwards');
+      }
+      &.L {
+        @include animation('mushroom 0.5s 2s ease-in forwards');
+      }
+      &.T {
+        @include animation('mushroom 0.5s 2.25s ease-in forwards');
+      }
+      &.S2 {
+        @include animation('mushroom 0.5s 2.5s ease-in forwards');
+      }
+    }
+  }
+  .results-index-text {
+    @include animation('fadeIn 0.5s forwards 3.5s');
+    position: absolute;
+    top: 0;
+    right: 10%;
+    left: 10%;
+    opacity: 0;
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 10px;
+    }
+    @media (min-width: $screen-md-min) {
+      @include transform(translateY(-50%));
+      top: 50%;
+      right: 20%;
+      left: 20%;
+    }
+    .results-table-contents {
+      td {
+        padding-top: 10px;
+        padding-bottom: 20px;
+      }
+      a {
+        text-decoration: underline;
+        color: $base-blue;
+        font-size: $font-size-h3;
+        font-weight: normal;
+      }
+      span {
+        display: block;
+        font-size: $font-size-h4;
+        @media (min-width: $screen-sm-min) {
+          display: inline-block;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+}
+
+.results-product, .results-conclusion {
+  padding: 60px;
+  height: 100%;
+  overflow-y: scroll;
+}

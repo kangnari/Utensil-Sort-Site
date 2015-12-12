@@ -21,24 +21,6 @@
     height: auto;
     margin-left: -25px;
   }
-  .nav {
-    width: 100%;
-    background-color: white;
-    a {
-      border-radius: 0px;
-      color: $base-blue;
-    }
-    .active {
-      background-color: $base-gray;
-      color: white;
-    }
-  }
-  .navbar-nav {
-    margin: 0px 0px;
-  }
-  .animated-nav.liquid-container {
-    height: auto;
-  }
 }
 
 /*
@@ -62,7 +44,7 @@
 
   .expand {
     position: absolute;
-    background: $base-gray;
+    background: $light-gray;
     border-radius: 50%;
     width: 350px;
     height: 350px;
@@ -85,24 +67,10 @@
         -ms-transform: translateY(-50%);
            -transform: translateY(-50%);
     @media (max-width: $screen-sm-min) {
-      -webkit-animation: move-text-all-up 1s forwards;
-         -moz-animation: move-text-all-up 1s forwards;
-          -ms-animation: move-text-all-up 1s forwards;
-             -animation: move-text-all-up 1s forwards;
-      -webkit-animation-delay: 1s;
-         -moz-animation-delay: 1s;
-          -ms-animation-delay: 1s;
-             -animation-delay: 1s;
+      @include animation('move-text-all-up 1s forwards 1s');
     }
     @media (min-width: $screen-sm-min) {
-      -webkit-animation: move-text-up 1s forwards;
-         -moz-animation: move-text-up 1s forwards;
-          -ms-animation: move-text-up 1s forwards;
-             -animation: move-text-up 1s forwards;
-      -webkit-animation-delay: 1s;
-         -moz-animation-delay: 1s;
-          -ms-animation-delay: 1s;
-             -animation-delay: 1s;
+      @include animation('move-text-up 1s forwards 1s');
     }
     @media (min-width: $screen-md-min) {
       left: 20%;
@@ -110,6 +78,7 @@
     }
 
     .design-table-contents {
+      @include animation('fadeIn 0.5s forwards 2.25s');
       opacity: 0;
       height: 0;
       h2 {
@@ -135,14 +104,6 @@
           margin-left: 20px;
         }
       }
-      -webkit-animation: fadeIn 0.5s forwards;
-         -moz-animation: fadeIn 0.5s forwards;
-          -ms-animation: fadeIn 0.5s forwards;
-             -animation: fadeIn 0.5s forwards;
-      -webkit-animation-delay: 2.25s;
-         -moz-animation-delay: 2.25s;
-          -ms-animation-delay: 2.25s;
-             -animation-delay: 2.25s;
     }
   }
 

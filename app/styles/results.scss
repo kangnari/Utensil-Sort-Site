@@ -15,6 +15,10 @@
   .ember-view {
     height: 100%;
   }
+  // Need to specify here to override.
+  .animated-nav {
+    height: auto;
+  }
 }
 
 /*
@@ -25,6 +29,7 @@
   position: relative;
   height: 100%;
   overflow: hidden;
+  background-color: $base-green;
   .animated-letters {
     position: absolute;
     top: 0;
@@ -43,6 +48,7 @@
       margin-left: 5px;
       margin-right: 5px;
       font-weight: bold;
+      color: white;
       &.R {
         @include animation('mushroom 0.5s 1s ease-in forwards');
       }
@@ -73,10 +79,14 @@
     right: 10%;
     left: 10%;
     opacity: 0;
+    color: white;
     h1 {
       text-align: center;
       font-weight: bold;
       letter-spacing: 10px;
+    }
+    h2 {
+      text-align: center;
     }
     @media (min-width: $screen-md-min) {
       @include transform(translateY(-50%));
@@ -91,7 +101,7 @@
       }
       a {
         text-decoration: underline;
-        color: $base-blue;
+        color: $base-yellow;
         font-size: $font-size-h3;
         font-weight: normal;
       }

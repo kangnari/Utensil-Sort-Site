@@ -12,7 +12,8 @@
   .ember-view {
     height: 100%;
   }
-  .animated-nav.liquid-container {
+  // Need to specify here to override.
+  .animated-nav {
     height: auto;
   }
 }

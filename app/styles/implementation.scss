@@ -97,4 +97,12 @@
   padding: 60px;
   height: 100%;
   overflow-y: scroll;
+  samp {
+    text-align: center;
+    font-size: 12px;
+  }
+  pre {
+    text-align: left;
+    font-size: 10px;
+  }
 }

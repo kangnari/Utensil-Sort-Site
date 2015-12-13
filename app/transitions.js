@@ -19,7 +19,7 @@ export default function() {
   // about <-> all other pages
   this.transition(
     this.fromRoute('about'),
-    this.toRoute(['design', 'implementation', 'results', 'conclusion', 'team', 'additional']),
+    this.toRoute(['design', 'implementation', 'results', 'conclusion', 'team']),
     this.use('toLeft', {
       duration: animationTime
     }),
@@ -32,7 +32,7 @@ export default function() {
   // design <-> all other pages
   this.transition(
     this.fromRoute('design'),
-    this.toRoute(['implementation', 'results', 'conclusion', 'team', 'additional']),
+    this.toRoute(['implementation', 'results', 'conclusion', 'team']),
     this.use('toLeft', {
       duration: animationTime
     }),
@@ -44,7 +44,7 @@ export default function() {
   // implementation <-> all other pages
   this.transition(
     this.fromRoute('implementation'),
-    this.toRoute(['results', 'conclusion', 'team', 'additional']),
+    this.toRoute(['results', 'conclusion', 'team']),
     this.use('toLeft', {
       duration: animationTime
     }),
@@ -56,7 +56,7 @@ export default function() {
   // results <-> all other pages
   this.transition(
     this.fromRoute('results'),
-    this.toRoute(['conclusion', 'team', 'additional']),
+    this.toRoute(['conclusion', 'team']),
     this.use('toLeft', {
       duration: animationTime
     }),
@@ -68,19 +68,7 @@ export default function() {
   // conclusion <-> all other pages
   this.transition(
     this.fromRoute('conclusion'),
-    this.toRoute(['team', 'additional']),
-    this.use('toLeft', {
-      duration: animationTime
-    }),
-    this.reverse('toRight', {
-      duration: animationTime
-    })
-  );
-
-  // team <-> all other pages
-  this.transition(
-    this.fromRoute('team'),
-    this.toRoute(['additional']),
+    this.toRoute('team'),
     this.use('toLeft', {
       duration: animationTime
     }),

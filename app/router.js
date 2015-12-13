@@ -21,7 +21,6 @@ Router.map(function() {
     this.route('conclusion');
   });
   this.route('team');
-  this.route('additional');
   this.route('about', function() {
     this.route('project');
     this.route('real');

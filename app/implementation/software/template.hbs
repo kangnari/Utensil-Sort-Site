@@ -1,3 +1,734 @@
 <div class="implementation-software">
-  <h1>Software</h1>
+  <div>
+    <h1>Software</h1>
+    <p class="lead">
+      We modularized our system's components to handle three primary tasks: 1) path planning; 2) utensil detection and classification; and 3) zumy movement. In the following section, we describe the software architecture underlying our system and detail the steps it must take to successfully sort a series of utensils.
+    </p>
+  </div>
+  <div>
+    <h2>Overview</h2>
+    <p>
+      As shown in Figure 1, our ROS workspace setup uses two camera nodes (usb_cam_global and usb_cam_utensil), a path planning node, an image processing node, a main control node, an ar tracking node, and a bridge node.
+    </p>
+    <div class="figure">
+      <img src="assets/images/implementation/rqt_graph.png" alt="RQT graph of system.">
+      <span>
+        <b>Figure 1:</b> RQT graph of the system. Note that service connections are actually bidirectional, but are drawn here as unidirectional for simplicity. Any identified arguments along these connections are provided by the node the arrow extends from.
+      </span>
+    </div>
+    <p>
+      In addition to providing the main control node with necessary transform information, the global camera node provides the path planning node with its most recently acquired image - when requested to - via the /last_image_global service. Similarly, the utensil camera node provides the image processing node with its most recently acquired image - when requested to - via the /last_image_utensil node.
+    </p>
+    <p>
+      The main control node is able to request information about the utensil that needs to be sorted from the image processing node via the /utensil_type service. Once armed with this information, the main control node can send a request to the path planning node via the /plan_path service for the optimal path to the correct utensil pile.
+    </p>
+    <p>
+      Navigation is made possible by subscribing main_control to the tf topic. With this subscription, main_control is given access to the latest tf information provided by the AR tracking node.
+    </p>
+    <p>
+      For the Zumy to properly perform its task, main_control must first request information about a utensil to be sorted from image_process. When the request is received, image_process retrieves the latest image from usb_cam_utensil and performs image classification on it (see design/image). The result of the classification is then sent back to main control.
+    </p>
+    <p>
+      With the classification result, main_control can request an obstacle-free path from the path-planning node by calling the /plan_path service. When the request is received, path_planning retrieves the latest image from usb_cam_global and performs path-planning on it. The result of the path-planning is then sent back to main control.
+    </p>
+    <p>
+      After main_control receives the optimal path from path_planning, it navigates the Zumy by communicating with it via the ros_bridge node and by keeping track of the Zumy's position relative to the world frame through the tf topic.
+    </p>
+  </div>
+  <div>
+    <h2>Pre-Existing Libraries</h2>
+    <p>
+      Thankfully, we were allowed to build upon the previous work of others, and were not forced to develop our entire ROS system from scratch. We now give credit where credit is due.
+    </p>
+    <p>
+      The usb camera launch files (which constructued the usb cam nodes) and the camera service file were minimally modified from those used in labs. In fact, with the exception of AR tag dimensions, camera resolution specs, and camera node names, we left the lab launch files untouched.
+    </p>
+    <p>
+      We also did not modify ar_track_alvar, an open source AR tag tracking library available through ROS.org, in any way. The package, which greatly simplified much of our code by removing the need to write transform-related code, was more than sufficient for our needs.
+    </p>
+  </div>
+  <div>
+    <h2>Path Planning</h2>
+    <p>
+      We implemented a separate node that exposes the path planning service through the getPath function. The node is initialized by running the following command:
+    </p>
+    <p>
+      <samp>path_planning.py [ x length ] [ y length ] [ # x points in grid ] [ # y points in grid ]</samp>
+    </p>
+    <p>
+      When the node first starts up, the arguments are used within the create_homography function (see Figure 2). Because we make the assumption that the boundaries of the field of movement will not change midway through the sorting process, the output from create_homography is stored and reused in future path planning requests.
+    </p>
+    <div class="figure">
+      <pre>
+        """ Create a grid of points for the Zumy to follow.
+        Associate x,y real-world coordinates with u,v image coordinates.
+        """
+        def create_homography(self):
+            # Define x,y ground coordinates
+            g_coords = np.array([[0, 0], [self.x_length, 0], [self.x_length, self.y_length], [0, self.y_length]])
+            A = np.zeros((8, 8))
+            b = np.array([])
+            i = 0
+            uv = self.boundary_corners
+            for coord in g_coords:
+                u = uv[0, i]
+                v = uv[1, i]
+                x = coord[0]
+                y = coord[1]
+                b = np.append(b, [u, v])
+                array1 = np.array([x, y, 1, 0, 0, 0, -u*x, -u*y])
+                array2 = np.array([0, 0, 0, x, y, 1, -v*x, -v*y])
+                A[2*i] = array1
+                A[2*i+1] = array2
+                i += 1
+            x = np.append(np.dot(np.linalg.inv(A), b.T), 1)
+            self.H = x.reshape(3, 3)
+      </pre>
+      <span>
+        <b>Figure 2:</b> Code for homography and grid creation.
+      </span>
+    </div>
+    <p>
+      As mentioned above, the getPath function is called whenever the path_planning service is requested. The getPath function is responsible for obtaining the latest global image and using the pre-calculated homography matrix to construct an obstacle grid. This grid can then be traversed using Dijkstra's to obtain the lowest-cost path. The associated functions can be viewed in Figure 3. Several helper functions have been included for the sake of clarity.
+    </p>
+    <div class="figure">
+      <pre>
+        """ Calculate the path the Zumy should take from
+        the origin tag to the end goal tag.
+
+        When possible, combine long strings of movement along the x- or y-axis,
+        but to a limit (to allow for correction).
+        
+        Keyword arguments:
+        request -- the request for the path. Indicates the goal of interest
+        """
+        def getPath(self, request):
+            # Set up a function to call the image capture service. The
+            # service is set up in camera_srv.py and uses the ImageSrv
+            # service type.
+            last_image_service = rospy.ServiceProxy('last_image_global', ImageSrv)
+
+            # Convert image from usb_global_cam to a NumPy image
+            image = self.ros_to_np_img(last_image_service().image_data)
+            # Convert image to grayscale and set as last_image
+            self.last_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            
+            grid = np.zeros((self.ny, self.nx))
+
+            # Get origin and destination as pixel points
+            destination_px = self.goal_px_locations[request.destination]
+
+            # Create the obstacle grid
+            grid = self.createGrid()
+            
+            # Calculate the lowest cost paths
+            prev = self.Dijkstra(grid, self.source)
+            
+            destX = destination_px[0]
+            destY = destination_px[1]
+
+            # Get associated position in grid
+            Q = np.linalg.inv(self.H)
+            currX = int((Q[0, 0]*destX + Q[0, 1]*destY + Q[0, 2])/(Q[2, 0]*destX + Q[2, 1]*destY + Q[2, 2]) / self.dx)
+            currY = int((Q[1, 0]*destX + Q[1, 1]*destY + Q[1, 2])/(Q[2, 0]*destX + Q[2, 1]*destY + Q[2, 2]) / self.dy)
+
+            pathX = [];
+            pathY = [];
+            while currX != self.source[0] or currY != self.source[1]:
+                realX = self.dx * currX; realY = self.dy * currY;
+                pathX.append(realX)
+                pathY.append(realY)
+                curr = prev[currX, currY, :]
+                currX = curr[0]
+                currY = curr[1]
+
+            pathX.append(self.source[0]*self.dx)
+            pathY.append(self.source[1]*self.dy)
+
+            pathX.append(self.offset[0]*self.dx)
+            pathY.append(self.offset[1]*self.dy)
+
+            pathX = pathX[::-1]
+            pathY = pathY[::-1]
+
+            return PathPlanningSrvResponse(pathX, pathY)
+
+
+        """ Create the grid the Zumy will traverse.
+        """
+        def createGrid(self):
+            grid = np.zeros((self.nx, self.ny))
+            for i in range(self.nx):
+                for j in range(self.ny):
+                    xbar = np.array([[i*self.dx], [j*self.dy], [1]])
+                    ubar = np.dot(self.H, xbar).T[0]
+                    u = np.int(ubar[0]/ubar[2])
+                    v = np.int(ubar[1]/ubar[2])
+                    # Check if the real world point looks like an obstacle or not
+                    if (self.last_image[v, u] &lt; self.threshold):
+                        # Obstacle exists
+                        grid[i, j] = 1
+                    else:
+                        # Obstacle-free
+                        grid[i, j] = 0
+            return grid
+
+
+        """ Returns a matrix of lowest-cost
+    
+        Keyword arguments:
+        graph -- nx x ny matrix repesenting obstacles on floor [np.matrix]
+        source -- starting point for path planning [[x, y]]
+        
+        Returns:
+        dist -- nx x ny matrix with shortest path distances to each point
+        [np.matrix]
+        
+        prev -- nx x ny x 2 matrix containing previous points along shortest path
+        [np.matrix]
+        """
+        def Dijkstra(self, graph, source):
+            [X, Y] = graph.shape
+            dist = np.zeros(graph.shape)
+            prev = np.zeros([X, Y, 2])
+            dist[source[0], source[1]] = 0                                  
+
+            Q = PriorityQueue.PriorityQueue()
+            numPtsLeft = X*Y;
+
+            for x in range(0, X):
+                for y in range(0, Y):
+                    v = [x, y]
+                    if x != source[0] or y != source[1]:
+                        dist[x, y] = float('Inf')
+                        prev[x, y, :] = [-1, -1]
+                    else:
+                        dist[x, y] = 0
+                        prev[x, y, :] = [0, 0]
+                    Q.insert(v, priority=dist[x, y])
+                
+            while numPtsLeft > 0:
+                [priority, u] = Q.pop()
+                numPtsLeft -= 1
+                neighbors = self.getNeighbors(u)
+                for idx in neighbors:
+                    v = neighbors[idx]
+                    newDist = dist[u[0], u[1]] + self.getLength(v, graph)
+                    if newDist &lt; dist[v[0], v[1]]:
+                        dist[v[0], v[1]] = newDist
+                        prev[v[0], v[1], :] = u
+                        Q.insert(v, priority=newDist)
+            return prev
+
+
+        """ Returns a list of points neighboring the
+        current point of interest.
+        
+        Keyword arguments:
+        pt -- current point of interest
+        """
+        def getNeighbors(self, pt):
+            neighbors = {}
+            x = pt[0]
+            y = pt[1]
+        
+            i = 0
+            if x &gt; 0:
+                neighbors[i] = [x-1, y]
+                i+=1
+            if x &lt; self.nx-1:
+                neighbors[i] = [x+1, y]
+                i+=1
+            if y &gt; 0:
+                neighbors[i] = [x, y-1]
+                i+=1
+            if y &lt; self.ny-1:
+                neighbors[i] = [x, y+1]
+            return neighbors
+
+
+        """ Determines the cost of moving from the current point
+        to a point of interest, based on whether the point of
+        interest contains an obstacle.
+        
+        Keyword arguments:
+        v -- potential next point/step [list] [1 x 2]
+        graph -- matrix representing the floor (indicates which points
+                 have obstacles on them [list] [nx x ny]
+        """
+        def getLength(self, v, graph):
+            [X, Y] = graph.shape
+            length = 1
+            vx = v[0]
+            vy = v[1]
+            if graph[vx, vy] == 1:
+                length = 2000
+            else:
+                length = 0
+                size = 2
+                for i in range(max(0, vx-size), min(self.nx, vx+size)):
+                    for j in range(max(0, vy-size), min(self.ny, vy+size)):
+                        if graph[i, j] == 1:
+                            if abs(vx-i) == 1 or abs(vy-j) == 1:
+                                # Obstacle is right next to point
+                                length += 500
+                            else:
+                                # Obstacle is near point, but not next to it
+                                length += 200
+            return min(length, 2000)
+      </pre>
+      <span>
+        <b>Figure 3:</b> Code for grid creation and Dijkstra's, along with associated functions.
+      </span>
+    </div>
+  </div>
+  <div>
+    <h2>Image Processing</h2>
+    <p>
+      We next implemented a node for image classification. The image_process node, which exposes the /utensil_type service through the triggerDetect function, is instantiated by running the following command:
+    </p>
+    <p>
+      <samp>image_process.py</samp>
+    </p>
+    <p>
+      As mentioned above, the triggerDetect function is called whenever the utensil_type service is fired by main_control. The triggerDetect function is responsible for obtaining the latest utensil image and applying the classification procedure on it. The associated functions can be viewed in Figure 4. Several helper functions have been included for the sake of clarity.
+    </p>
+    <div class="figure">
+      <pre>
+        """ Triggers the detection process. This should only be called when
+        an external node makes a request to the utensil_type service.
+
+        Requests an image from the last_image service and detects whether
+        the utensil in the image is a knife, fork, or spoon. The result
+        is sent back to the requesting node.
+
+        Keyword arguments:
+        request -- the request made by another node
+        """
+        def triggerDetect(self, request):
+            # Set up a function to call the image capture service. The
+            # service is set up in camera_srv.py and uses the ImageSrv
+            # service type.
+            last_image_service = rospy.ServiceProxy('last_image_utensil', ImageSrv)
+
+            # Set last_image to the NumPy converted image
+            self.last_image = self.ros_to_np_img(last_image_service().image_data)
+
+            # Detect what type of utensil is being displayed
+            self.utensil_type = self.classify()
+
+            # Notify the requesting node of the utensil type
+            return UtensilSrvResponse(self.utensil_type)
+
+
+        """ Converts an rgb image into a matrix of points.
+
+        Keyword arguments:
+        image -- image to be converted [Image]
+        """
+        def rbg2Points(self, image):
+            r, g, b = image[:,:,0], image[:,:,1], image[:,:,2]
+            greyImg = 0.2989*r + 0.5870*b + 0.1140*b
+            if self.white:
+                greyImg = 255 - image
+
+            bwImg = np.zeros(greyImg.shape)
+            backIdxs = greyImg[:, :] &lt; self.thresh
+            utensilIdxs = greyImg[:, :] &gt; self.thresh
+            bwImg[backIdxs] = 1
+            bwImg[utensilIdxs] = 0
+
+            points = np.where(bwImg[:, :] == 1)
+
+            return points
+
+
+        """ Rotates the sampled points such that the image
+        lies along the x-axis.
+
+        Keyword arguments:
+        points -- points to be rotated [2xn array of x and y points]
+        angle  -- angle to rotate points by [float]
+        """
+        def rotatePts(self, points, angle):
+            x0 = points[0]
+            y0 = points[1]
+            r = np.sqrt(np.multiply(x0, x0) + np.multiply(y0, y0))
+
+            theta0 = np.arctan2(y0, x0)
+            thetaf = theta0 + angle
+
+            xf = r*np.cos(thetaf)
+            yf = r*np.sin(thetaf)
+            return (xf, yf)
+
+
+        """ Centers and rotates sampled points.
+
+        Keyword arguments:
+        points -- points to be rotated and centered.
+        """
+        def centerAndTurn(self, points):
+            xOrig = points[0]
+            yOrig = points[1]
+        
+            uniqueX = np.unique(xOrig)
+            uniqueY = np.unique(yOrig)
+        
+            # Center utensil points around origin by shifting (midX, midY) to (0, 0)
+            midX = np.average(uniqueX)
+            midY = np.average(uniqueY)
+        
+            centeredX = xOrig - midX
+            centeredY = yOrig - midY
+        
+            centeredPts = (centeredX, centeredY)
+            # fit a line to the utensil data
+            fitted = np.polyfit(centeredX, centeredY, 1)
+
+            # rotate data by -theta where theta is the angle the line of best fit makes
+            # with the x-axis
+            theta = np.arctan(fitted[0])
+            rotated = self.rotatePts(centeredPts, -1*theta)
+        
+            rotatedX = rotated[0]
+            rotatedY = rotated[1]
+            # Recenter rotated data points because they are not very well centered after
+            # the rotation
+            uniqueRotatedX = np.unique(rotatedX)
+            uniqueRotatedY = np.unique(rotatedY)
+        
+            midX = np.average(uniqueRotatedX)
+            midY = np.average(uniqueRotatedY)
+        
+            finalX = rotatedX - midX
+            finalY = rotatedY - midY
+        
+            return (finalX, finalY)
+
+
+        """ Takes the "projection" of a scatter plot on the
+        x-axis in terms of the width. 
+
+        Keyword arguments:
+        points -- points to be projected
+        """
+        def widthProjection(self, points):
+            x = points[0]
+            y = points[1]
+        
+            xMin = np.amin(x)
+            xMax = np.amax(x)
+        
+            height = np.ones(xMax-xMin+1)
+            for i in range(0, len(y)):
+                xVal = x[i]
+                yVal = y[i]
+                xIdx = (xVal-xMin)
+                height[xIdx] = max(yVal, height[xIdx])
+            return height
+
+
+        """ Classifies the provided utensil.
+        """
+        def classify(self):
+            image = self.last_image
+            thresh = self.thresh
+            white = self.white
+            isForkThresh = 1
+            isSpoonThresh = 1.8
+            # Convert RGB image to set of scatter plot points
+            imgPoints = self.rbg2Points(image)
+        
+            xPoints = imgPoints[0]
+            yPoints = imgPoints[1]
+        
+            xDev = np.std(xPoints)
+            yDev = np.std(yPoints)
+        
+            # Turn the image so that axis with larger std dev is parallel to x
+            # This is important for line fitting to work even if utensil is vertical
+            if (xDev &gt; yDev):
+                imgPoints = (xPoints, yPoints)
+            else:
+                imgPoints = (yPoints, xPoints)
+        
+            #Rotate and center scatter point image
+            imgPoints = self.centerAndTurn(imgPoints)
+        
+            #Compute projection (using the difference between the min and max at each crossSection)
+            projection = self.widthProjection(imgPoints)
+        
+            #Compute derivitive of projection
+            derivitiveFilt = [1, -1]
+            dProjection = np.convolve(projection, derivitiveFilt, 'full')
+        
+            #Check how large the maximum derivitive value is relative to the mean
+            dProjectionAbs = np.abs(dProjection)
+            forkScore = np.amax(dProjectionAbs) / np.average(projection)
+            
+            if forkScore >= isForkThresh:
+                return "fork"
+        
+            #Compute the ratio between the maximum and average utensil widths
+            maxWidth = np.amax(projection)
+            avgWidth = np.average(projection)
+            spoonScore = maxWidth / avgWidth
+            
+            if spoonScore >= isSpoonThresh:
+                return "spoon"
+            else:
+                return "knife"
+      </pre>
+      <span>
+        <b>Figure 4:</b> Code for image classification, with associated functions.
+      </span>
+    </div>
+  </div>
+  <div>
+    <h2>Main Control</h2>
+    <p>
+      Lastly, we implemented a separate node that serves as the main control center for the entire operation. The main_control node is initialized by running the following command:
+    </p>
+    <p>
+      <samp>main_control.py [ zumy name ] [ AR zumy tag # ] [ AR start tag # ]</samp>
+    </p>
+    <p>
+      In main control, we divided movement such that turns and forward movement were two separate procedures (as discussed in Design). The functions for turns and forward/backward movement, as well as their helper functions, can be seen in Figure 5.
+    </p>
+    <div class="figure">
+      <pre>
+        """ Returns zumy heading (angle from x axis, in degrees)
+        """ 
+        def heading(self):
+            zumy_tag = self.ar_tags["zumy"]
+            start_tag = self.ar_tags["start"]
+            (trans, rot) = self.listener.lookupTransform(start_tag, zumy_tag, rospy.Time(0))
+            euler = tf.transformations.euler_from_quaternion(rot)
+            return (180/np.pi)*euler[2]
+
+
+        """ Returns the (x,y) position of the Zumy in the coordinate
+        frame defined by the origin AR tag
+        """
+        def xyPos(self):
+            zumy_tag = self.ar_tags["zumy"]
+            start_tag = self.ar_tags["start"]
+            try:
+                (trans, rot) = self.listener.lookupTransform(start_tag, zumy_tag, rospy.Time(0))
+                xTrans = trans[0]*100
+                yTrans = trans[1]*100
+                return [xTrans, yTrans]
+            except:
+                pass
+
+
+        """ Turn the zumy to a certain angle.
+
+        Keyword arguments:
+        desired_angle -- angle zumy should turn to [number]
+        """
+        def turn(self, desired_angle):
+            # Define parameters for applying variable speed
+            min_speed = 0.17
+            max_speed = 0.17
+            min_angle = 10
+            max_angle = 50
+            change_speed = (max_speed-min_speed) / (max_angle-min_angle)
+            offset = min_speed - change_speed * min_angle
+
+            # Get current angle of Zumy relative to start
+            current_angle = self.heading()
+
+            if desired_angle &lt; 0:
+                desired_angle = desired_angle + 360
+            if current_angle &lt; 0:
+                current_angle = current_angle + 360
+
+            # Determine which direction to turn
+            if desired_angle &lt; current_angle:
+                if current_angle &lt; desired_angle  + 180:
+                    # Turn right
+                    direction = -1
+                else:
+                    # Turn left
+                    direction = 1
+            else:
+                if desired_angle &lt; current_angle + 180:
+                    # Turn left
+                    direction = 1
+                else:
+                    # Turn right
+                    direction = -1
+
+            # Create turn command
+            cmd = Twist()
+            cmd.linear.x = 0
+            cmd.linear.y = 0
+            cmd.linear.z = 0
+            cmd.angular.x = 0
+            cmd.angular.y = 0
+            done = False
+
+            while not rospy.is_shutdown() and not done:
+                try:
+                    # Get new angle of Zumy relative to start
+                    new_angle = self.heading()
+                    if (new_angle &lt; 0):
+                        new_angle = new_angle + 360
+                    diff = abs(desired_angle - new_angle)
+                    if diff &lt; self.angle_diff:
+                        done = True
+                        self.stop()
+                    else:
+                        speed = min(max_speed, max(min_speed, offset+change_speed*diff))
+                        cmd.angular.z = direction * speed
+                        self.zumy_vel.publish(cmd)
+                        self.rate.sleep()
+                except KeyboardInterrupt:
+                    break
+            return
+
+
+        """ Move the Zumy along the x- or y-axis for
+        a given distance
+
+        Keyword arguments:
+        amount -- amount to move by [cm]
+        """
+        def forward(self, amount):
+            # Define parameters for applying variable speed
+            min_speed = 0.08
+            max_speed = 0.10
+            min_dist = 2
+            max_dist = 10
+            change_speed = (max_speed-min_speed) / (max_dist-min_dist)
+            offset = min_speed - change_speed * min_dist
+
+            cmd = Twist()
+            cmd.linear.y = 0
+            cmd.linear.z = 0
+            cmd.angular.x = 0
+            cmd.angular.y = 0
+            cmd.angular.z = 0
+
+            done = False
+            #Get current position of Zumy relative to start(origin)
+            coor0 = self.xyPos()
+            while not rospy.is_shutdown() and not done:
+                try:
+                    coor1 = self.xyPos()
+                    dist = np.sqrt((coor1[0]-coor0[0])**2 + (coor1[1]-coor0[1])**2)
+                    diff = abs(amount) - dist
+                    if (diff &lt; self.dist_diff):
+                        done = True
+                        self.stop()
+                    else:
+                        speed = min(max_speed, max(min_speed, offset+change_speed*diff))
+                        cmd.linear.x = np.sign(amount) * speed
+                        self.zumy_vel.publish(cmd)
+                        self.rate.sleep()
+                except KeyboardInterrupt:
+                    break
+            return
+
+
+        """ Stop Zumy movement.
+        """
+        def stop(self):
+            cmd = Twist()
+            cmd.linear.x = 0
+            cmd.linear.y = 0
+            cmd.linear.z = 0
+            cmd.angular.x = 0
+            cmd.angular.y = 0
+            cmd.angular.z = 0
+            self.zumy_vel.publish(cmd)
+            return
+      </pre>
+      <span>
+        <b>Figure 5:</b> Code for basic Zumy movement, with associated functions.
+      </span>
+    </div>
+    <p>
+      With these basic functions in hand, it was simple enough to develop a function that would move the Zumy along a path while correcting any errors caused by over/undershoots (as discussed in the Design section).
+    </p>
+    <div class="figure">
+      <pre>
+        """ Given a path output from the path planning service node,
+        move the Zumy point by point until it has reached its current
+        goal.
+        """
+        def moveToGoal(self):
+            i = 1
+            minError = self.dist_diff;
+            pathX = self.pathX
+            pathY = self.pathY
+            while not rospy.is_shutdown() and i &lt; len(pathX):
+                nextPointX = pathX[i]
+                nextPointY = pathY[i]
+                currPos = self.xyPos()
+                currHeading = self.heading()
+                
+                # Compare x values
+                dX = nextPointX - currPos[0]
+                dY = nextPointY - currPos[1]
+
+                # Calculate necessary angle of turn
+                angle = np.arctan2(dY, dX)*180/np.pi
+                distance = np.sqrt(dX**2 + dY**2)
+                
+                self.turn(angle + (self.to_origin - 1)*np.sign(angle)*180)
+                self.forward((-1)**(1-self.to_origin)*distance)
+                i = i + 1
+
+            # Toggle goal
+            self.to_origin = not self.to_origin
+            return
+      </pre>
+      <span>
+        <b>Figure 6:</b> Code to move the Zumy along a path while allowing for error correction.
+      </span>
+    </div>
+    <p>
+      Once all of the above functions were defined, they had to be combined in main_control's run function for the system to begin sorting utensils. In the run function for main_control (shown in Figure 7), both the utensil_type and plan_path services are triggered. The returned results are then applied via the moveToGoal function defined in Figure 6.
+    </p>
+    <div class="figure">
+      <pre>
+          """ Main node execution function.
+          """
+          def run(self):
+              # Set up a function to call the utensil detection service. The
+              # service is set up in image_process.py and uses the UtensilSrv
+              # service type.
+              rospy.wait_for_service("plan_path")
+              rospy.wait_for_service("utensil_type")
+              plan_path = rospy.ServiceProxy("plan_path", PathPlanningSrv)
+              classification_service = rospy.ServiceProxy('utensil_type', UtensilSrv)
+              while not rospy.is_shutdown() and not self.done:
+                  try:
+                      utensil = classification_service().utensil_type
+                      if utensil:
+                          # Set the path the Zumy should follow
+                          path = plan_path(utensil)
+                          self.pathX = path.path_points_x
+                          self.pathY = path.path_points_y
+                          self.moveToGoal()
+                          # Reverse direction to return Zumy to start
+                          self.pathX = self.pathX[::-1]
+                          self.pathY = self.pathY[::-1]
+                          self.moveToGoal()
+                          self.rate.sleep
+                      else:
+                          # The Zumy has finished sorting all utensils.
+                          self.done = True
+                  except KeyboardInterrupt:
+                      self.stop()
+                      break
+      </pre>
+      <span>
+        <b>Figure 7:</b> Code for the run function in main_control.
+      </span>
+    </div>
+  </div>
 </div>
